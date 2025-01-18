@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Biostatistik und Studiendesign",
+    "section": "",
+    "text": "Code\nimport math\ndef berechne_ppv(sens: float, spez: float, praev: float) -&gt; float:\n    return (sens * praev) / (sens * praev + (1 - spez) * (1 - praev))\n\ndef berechne_npv(sens: float, spez: float, praev: float) -&gt; float:\n    return (spez * (1 - praev)) / (spez * (1 - praev) + (1 - sens) * praev)\n\ndef berechne_95_ci(s: float, n: int) -&gt; tuple:\n    lower = s - 1.96 * math.sqrt(s * (1 - s) / n)\n    upper = s + 1.96 * math.sqrt(s * (1 - s) / n)\n    return lower, upper"
+  },
+  {
+    "objectID": "index.html#aufgabe-2-glaukom",
+    "href": "index.html#aufgabe-2-glaukom",
+    "title": "Biostatistik und Studiendesign",
+    "section": "Aufgabe 2: Glaukom",
+    "text": "Aufgabe 2: Glaukom\n\nPrävalenz: 0.9 % = 0.009\nSensitivität: 85 % = 0.85\nSpezifität: 90 % = 0.90\n\n\n\nCode\nprevalence = 0.009  # 0.9% Prävalenz bei Personen über 40\nsensitivity = 0.85  # 85% Sensitivität\nspecificity = 0.90  # 90% Spezifität\n\n\n\n2\n\n\nCode\nppv_screening = berechne_ppv(sensitivity, specificity, prevalence)\nppv_screening\n\n\n0.07166276346604215\n\n\n\n\nCode\nnpv_screening = berechne_npv(sensitivity, specificity, prevalence)\nnpv_screening\n\n\n0.9984886649874056\n\n\n\n\n3\n\n\nCode\npopulation = 100000\ntrue_positives = sensitivity * prevalence * population\nfalse_negatives = (1 - sensitivity) * prevalence * population\nfalse_positives = (1 - specificity) * (1 - prevalence) * population\ntrue_negatives = specificity * (1 - prevalence) * population\ntrue_positives, false_negatives, false_positives, true_negatives\n\n\n(764.9999999999999, 135.0, 9909.999999999998, 89190.0)"
+  },
+  {
+    "objectID": "index.html#aufgabe-3",
+    "href": "index.html#aufgabe-3",
+    "title": "Biostatistik und Studiendesign",
+    "section": "Aufgabe 3",
+    "text": "Aufgabe 3\n\n1\n\n\nCode\n# Gegebene Werte aus der Studie (Katz et al., 1993)\nsensitivity_study = 0.836  # Sensitivität des Suprathreshold Visual Field Test\nspecificity_study = 0.749  # Spezifität des Suprathreshold Visual Field Test\n\n# Populationsgröße in der Studie\ntotal_population_study = 5341  \n\n# Anzahl tatsächlich kranker (Glaukomfälle)\ntrue_cases_study = 146  \n\n# Anzahl gesunder Personen\nhealthy_cases_study = total_population_study - true_cases_study  \n\n# Berechnung der Prävalenz in der Studienpopulation\nprevalence_study = true_cases_study / total_population_study  \n\n# Berechnung des positiven prädiktiven Werts (PPV)\nppv_study = berechne_ppv(sensitivity_study, specificity_study, prevalence_study)\n\n# Berechnung des negativen prädiktiven Werts (NPV)\nnpv_study = berechne_npv(sensitivity_study, specificity_study, prevalence_study)\n\nppv_study, npv_study\n\n\n(0.08559320785890051, 0.9938840341977099)\n\n\nPrävalenz bei beiden Test nacheinander. Prävalenz des zweiten Tests ist PPV des ersten Tests.\n\n\nCode\nppv_study_after_positive_screening = berechne_ppv(sensitivity_study, specificity_study, ppv_screening)\nnpv_study_after_positive_screening = berechne_npv(sensitivity_study, specificity_study, ppv_screening)\nppv_study_after_positive_screening, npv_study_after_positive_screening\n\n\n(0.20452517628999506, 0.9833784884837806)\n\n\n\n\n2\n\na\n\n\nCode\n1-npv_study\n\n\n0.006115965802290124\n\n\n\n\nc\n\n\nCode\n1-ppv_study\n\n\n0.9144067921410994\n\n\n\n\n\n3\n\n\nCode\nberechne_95_ci(sensitivity_study, total_population_study), berechne_95_ci(specificity_study, total_population_study)\n\n\n((0.8260695290539164, 0.8459304709460835),\n (0.7373715306646761, 0.7606284693353239))"
+  }
+]
