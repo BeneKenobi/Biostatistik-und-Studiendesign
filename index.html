@@ -4765,10 +4765,10 @@ font-size: small !important;
 }
 </style>
 <meta property="og:title" content="Biostatistik und Studiendesign">
-<meta property="og:image" content="preview.png">
+<meta property="og:image" content="https://BeneKenobi.github.io/Biostatistik-und-Studiendesign/preview.png">
 <meta property="og:site_name" content="Biostatistik und Studiendesign">
 <meta name="twitter:title" content="Biostatistik und Studiendesign">
-<meta name="twitter:image" content="preview.png">
+<meta name="twitter:image" content="https://BeneKenobi.github.io/Biostatistik-und-Studiendesign/preview.png">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -4848,7 +4848,7 @@ font-size: small !important;
 </header>
 
 
-<div id="108ebd28" class="cell" data-execution_count="1">
+<div id="770821ce" class="cell" data-execution_count="1">
 <details open class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
@@ -4871,17 +4871,17 @@ font-size: small !important;
 <li>Sensitivität: 85 % = 0.85</li>
 <li>Spezifität: 90 % = 0.90</li>
 </ul>
-<div id="28808357" class="cell" data-execution_count="2">
+<div id="d34eced4" class="cell" data-execution_count="2">
 <details open class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>prevalence <span class="op">=</span> <span class="fl">0.009</span>  <span class="co"># 0.9% Prävalenz bei Personen über 40</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sensitivity <span class="op">=</span> <span class="fl">0.85</span>  <span class="co"># 85% Sensitivität</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>specificity <span class="op">=</span> <span class="fl">0.90</span>  <span class="co"># 90% Spezifität</span></span></code><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>prevalence <span class="op">=</span> <span class="fl">0.009</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sensitivity <span class="op">=</span> <span class="fl">0.85</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>specificity <span class="op">=</span> <span class="fl">0.90</span></span></code><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <section id="section" class="level3">
 <h3 class="anchored" data-anchor-id="section">2</h3>
-<div id="f51eab81" class="cell" data-execution_count="3">
+<div id="a4d142b1" class="cell" data-execution_count="3">
 <details open class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ppv_screening <span class="op">=</span> berechne_ppv(sensitivity, specificity, prevalence)</span>
@@ -4891,7 +4891,7 @@ font-size: small !important;
 <pre><code>0.07166276346604215</code></pre>
 </div>
 </div>
-<div id="5ce3ac6b" class="cell" data-execution_count="4">
+<div id="4683ee55" class="cell" data-execution_count="4">
 <details open class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>npv_screening <span class="op">=</span> berechne_npv(sensitivity, specificity, prevalence)</span>
@@ -4904,7 +4904,7 @@ font-size: small !important;
 </section>
 <section id="section-1" class="level3">
 <h3 class="anchored" data-anchor-id="section-1">3</h3>
-<div id="2e955271" class="cell" data-execution_count="5">
+<div id="1570265d" class="cell" data-execution_count="5">
 <details open class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>population <span class="op">=</span> <span class="dv">100000</span></span>
@@ -4924,7 +4924,7 @@ font-size: small !important;
 <h2 class="anchored" data-anchor-id="aufgabe-3">Aufgabe 3</h2>
 <section id="section-2" class="level3">
 <h3 class="anchored" data-anchor-id="section-2">1</h3>
-<div id="0d14aa2b" class="cell" data-execution_count="6">
+<div id="e12de05d" class="cell" data-execution_count="6">
 <details open class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gegebene Werte aus der Studie (Katz et al., 1993)</span></span>
@@ -4956,7 +4956,7 @@ font-size: small !important;
 </div>
 </div>
 <p>Prävalenz bei beiden Test nacheinander. Prävalenz des zweiten Tests ist PPV des ersten Tests.</p>
-<div id="1b5893b0" class="cell" data-execution_count="7">
+<div id="eb71a5be" class="cell" data-execution_count="7">
 <details open class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ppv_study_after_positive_screening <span class="op">=</span> berechne_ppv(sensitivity_study, specificity_study, ppv_screening)</span>
@@ -4972,7 +4972,7 @@ font-size: small !important;
 <h3 class="anchored" data-anchor-id="section-3">2</h3>
 <section id="a" class="level4">
 <h4 class="anchored" data-anchor-id="a">a</h4>
-<div id="befd202c" class="cell" data-execution_count="8">
+<div id="92a24108" class="cell" data-execution_count="8">
 <details open class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="op">-</span>npv_study</span></code><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -4984,7 +4984,7 @@ font-size: small !important;
 </section>
 <section id="c" class="level4">
 <h4 class="anchored" data-anchor-id="c">c</h4>
-<div id="889651d7" class="cell" data-execution_count="9">
+<div id="a17115d3" class="cell" data-execution_count="9">
 <details open class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="op">-</span>ppv_study</span></code><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -4997,7 +4997,7 @@ font-size: small !important;
 </section>
 <section id="section-4" class="level3">
 <h3 class="anchored" data-anchor-id="section-4">3</h3>
-<div id="25df331b" class="cell" data-execution_count="10">
+<div id="df46fbb1" class="cell" data-execution_count="10">
 <details open class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>berechne_95_ci(sensitivity_study, total_population_study), berechne_95_ci(specificity_study, total_population_study)</span></code><button title="In die Zwischenablage kopieren" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -5103,7 +5103,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/BeneKenobi\.github\.io\/Biostatistik-und-Studiendesign\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
