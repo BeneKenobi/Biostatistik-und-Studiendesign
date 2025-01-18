@@ -1,0 +1,109 @@
+---
+title: "Biostatistik und Studiendesign"
+---
+
+```{python}
+import math
+def berechne_ppv(sens: float, spez: float, praev: float) -> float:
+    return (sens * praev) / (sens * praev + (1 - spez) * (1 - praev))
+
+def berechne_npv(sens: float, spez: float, praev: float) -> float:
+    return (spez * (1 - praev)) / (spez * (1 - praev) + (1 - sens) * praev)
+
+def berechne_95_ci(s: float, n: int) -> tuple:
+    lower = s - 1.96 * math.sqrt(s * (1 - s) / n)
+    upper = s + 1.96 * math.sqrt(s * (1 - s) / n)
+    return lower, upper
+```
+
+## Aufgabe 2: Glaukom
+
+- Prävalenz: 0.9 % = 0.009
+- Sensitivität: 85 % = 0.85
+- Spezifität: 90 % = 0.90
+
+```{python}
+prevalence = 0.009  # 0.9% Prävalenz bei Personen über 40
+sensitivity = 0.85  # 85% Sensitivität
+specificity = 0.90  # 90% Spezifität
+```
+
+### 2
+
+```{python}
+ppv_screening = berechne_ppv(sensitivity, specificity, prevalence)
+ppv_screening
+```
+
+```{python}
+npv_screening = berechne_npv(sensitivity, specificity, prevalence)
+npv_screening
+```
+
+### 3
+
+```{python}
+population = 100000
+true_positives = sensitivity * prevalence * population
+false_negatives = (1 - sensitivity) * prevalence * population
+false_positives = (1 - specificity) * (1 - prevalence) * population
+true_negatives = specificity * (1 - prevalence) * population
+true_positives, false_negatives, false_positives, true_negatives
+```
+
+## Aufgabe 3
+
+### 1
+
+```{python}
+# Gegebene Werte aus der Studie (Katz et al., 1993)
+sensitivity_study = 0.836  # Sensitivität des Suprathreshold Visual Field Test
+specificity_study = 0.749  # Spezifität des Suprathreshold Visual Field Test
+
+# Populationsgröße in der Studie
+total_population_study = 5341  
+
+# Anzahl tatsächlich kranker (Glaukomfälle)
+true_cases_study = 146  
+
+# Anzahl gesunder Personen
+healthy_cases_study = total_population_study - true_cases_study  
+
+# Berechnung der Prävalenz in der Studienpopulation
+prevalence_study = true_cases_study / total_population_study  
+
+# Berechnung des positiven prädiktiven Werts (PPV)
+ppv_study = berechne_ppv(sensitivity_study, specificity_study, prevalence_study)
+
+# Berechnung des negativen prädiktiven Werts (NPV)
+npv_study = berechne_npv(sensitivity_study, specificity_study, prevalence_study)
+
+ppv_study, npv_study
+```
+
+Prävalenz bei beiden Test nacheinander. Prävalenz des zweiten Tests ist PPV des ersten Tests.
+```{python}
+ppv_study_after_positive_screening = berechne_ppv(sensitivity_study, specificity_study, ppv_screening)
+npv_study_after_positive_screening = berechne_npv(sensitivity_study, specificity_study, ppv_screening)
+ppv_study_after_positive_screening, npv_study_after_positive_screening
+```
+
+### 2
+
+#### a
+
+```{python}
+1-npv_study
+```
+
+#### c
+
+```{python}
+1-ppv_study
+```
+
+### 3
+
+```{python}
+berechne_95_ci(sensitivity_study, total_population_study), berechne_95_ci(specificity_study, total_population_study)
+```

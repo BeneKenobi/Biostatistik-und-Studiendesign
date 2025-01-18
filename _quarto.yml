@@ -1,0 +1,43 @@
+project:
+  type: website
+
+author:
+  - name: Benedikt Schnur
+    orcid: 0000-0002-1977-7878
+    affiliations:
+      - name: Medizinische Hochschule Hannover (MHH)
+        department: Institut für Humangenetik
+        url: https://www.mhh.de/humangenetik
+
+lang: "de"
+
+website:
+  title: "Biostatistik und Studiendesign"
+  favicon: favicon-32x32.png
+  sidebar:
+    search: false
+    contents: auto
+
+format:
+  html:
+    theme: darkly
+    highlight-style: gruvbox
+    css: styles.css
+    mainfont: "'Seravek', 'Gill Sans Nova', 'Ubuntu', 'Calibri', 'DejaVu Sans', 'source-sans-pro', 'sans-serif'"
+    tbl-cap-location: bottom
+    toc: true
+    toc-depth: 2
+    number-sections: false
+    fig-format: retina
+    fig-width: 9.5
+    fig-asp: 0.6
+    link-external-newwindow: true
+    embed-resources: true
+    df-print: paged
+    code-fold: show
+    warning: false
+    message: NA
+
+image: "preview.png"
+open-graph: true
+twitter-card: true
