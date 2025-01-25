@@ -1,0 +1,128 @@
+---
+title: "Woche 3"
+---
+
+```{python}
+import math
+from typing import Tuple
+from collections import namedtuple
+import plotly.graph_objects as go
+import plotly.io as pio
+
+
+BENE_COLORS_DARK: Tuple[str, ...] = (
+    "#47476b",
+    "#6B5706",
+    "#206260",
+    "#93003a",
+    "#215F80",
+    "#973C2B",
+    "#008381",
+    "#6d3d3d",
+    "#595865",
+)
+pio.templates["bene"] = go.layout.Template(layout=go.Layout(colorway=BENE_COLORS_DARK))
+pio.templates.default = "plotly_white+bene"
+
+FourByFourTable = namedtuple("FourByFourTable", ["a", "b", "c", "d"])
+
+def berechne_RR (four_x_four: FourByFourTable) -> float:
+    return (four_x_four.a / (four_x_four.a + four_x_four.b)) / (four_x_four.c / (four_x_four.c + four_x_four.d))
+
+def berechne_SE_ln_RR (four_x_four: FourByFourTable) -> float:
+    return math.sqrt((four_x_four.b/(four_x_four.a*(four_x_four.a+four_x_four.b)))+(four_x_four.d/(four_x_four.c*(four_x_four.c+four_x_four.d))))
+
+def berechne_95_CI (four_x_four: FourByFourTable) -> Tuple[float, float]:
+    RR = berechne_RR(four_x_four)
+    ln_RR = math.log(RR)
+    SE_ln_RR = berechne_SE_ln_RR(four_x_four)
+    z = 1.96  # 95% confidence interval
+    lower_ln = ln_RR - z * SE_ln_RR
+    upper_ln = ln_RR + z * SE_ln_RR
+    lower_CI = math.exp(lower_ln)
+    upper_CI = math.exp(upper_ln)
+    return lower_CI, upper_CI
+```
+
+## Aufgabe 2
+
+```{python}
+four_x_four = FourByFourTable(12, 288, 20, 180)
+```
+
+### 1. b
+
+$\widehat{SE}$:
+
+```{python}
+f"{berechne_SE_ln_RR(four_x_four):.2f}"
+```
+
+```{python}
+"{:.2f}, {:.2f}".format(*berechne_95_CI(four_x_four))
+```
+
+2.
+
+```{python}
+RR = berechne_RR(four_x_four)
+CI = berechne_95_CI(four_x_four)
+
+four_x_four_half = FourByFourTable(6, 144, 10, 90)
+RR_half = berechne_RR(four_x_four_half)
+CI_half = berechne_95_CI(four_x_four_half)
+
+four_x_four_10 = FourByFourTable(120, 2880, 200, 1800)
+RR_10 = berechne_RR(four_x_four_10)
+CI_10 = berechne_95_CI(four_x_four_10)
+
+fig = go.Figure()
+y_axis = ["n=2500", "n=500", "n=250"]
+fig.add_trace( 
+    go.Scatter(
+        x=[RR_10, RR, RR_half],
+        y= y_axis,
+        mode="markers",
+        marker=dict(size=10, symbol="square"),
+        error_x=dict(
+            type="data",
+            symmetric=False,
+            array=[CI_10[1] - RR_10, CI[1] - RR, CI_half[1] - RR_half],
+            arrayminus=[RR_10 - CI_10[0], RR - CI[0], RR_half - CI_half[0]],
+        ),
+    )
+)
+fig.add_vline(x=1)
+fig.add_vline(x=0.7, line_dash="dash")
+fig.add_vline(x=1.5, line_dash="dash")
+
+fig.update_layout(
+    xaxis=dict(range=[0, 2]),
+)
+
+fig.show()
+```
+
+## Aufgabe 4
+
+### a
+```{python}
+ln_RR = [3.5175, 0.7129, 1.5581, 1.1410, 1.6332]
+SE_ln_RR = [1.4210, 1.2122, 0.5533, 0.3818, 0.3436]
+# Berechnung der Gewichte w_i
+weights = [1 / (se ** 2) for se in SE_ln_RR]
+
+# Berechnung von Summe(w_i * ln(RR)) und Summe(w_i)
+sum_w_lnRR = sum(w * lnrr for w, lnrr in zip(weights, ln_RR))
+sum_w = sum(weights)
+# Berechnung des gepoolten ln(RR)
+ln_RR_pool = sum_w_lnRR / sum_w
+RR_pool = math.exp(ln_RR_pool)
+
+f"{RR_pool:.2f}"
+```
+
+### b
+```{python}
+f"{weights[4]:.2f}"
+```
