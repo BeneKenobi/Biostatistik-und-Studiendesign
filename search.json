@@ -1,37 +1,152 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Biostatistik und Studiendesign",
+    "objectID": "woche3.html",
+    "href": "woche3.html",
+    "title": "Woche 3",
     "section": "",
-    "text": "Code\nimport math\nimport numpy as np\nimport scipy.interpolate as interp\nfrom typing import Tuple\nfrom collections import namedtuple\nimport plotly.graph_objects as go\nimport plotly.io as pio\n\n\nBENE_COLORS_DARK: Tuple[str, ...] = (\n    \"#47476b\",\n    \"#6B5706\",\n    \"#206260\",\n    \"#93003a\",\n    \"#215F80\",\n    \"#973C2B\",\n    \"#008381\",\n    \"#6d3d3d\",\n    \"#595865\",\n)\npio.templates[\"bene\"] = go.layout.Template(layout=go.Layout(colorway=BENE_COLORS_DARK))\npio.templates.default = \"plotly_white+bene\"\n\nFourByFourTable = namedtuple(\"FourByFourTable\", [\"a\", \"b\", \"c\", \"d\"])\n\n\ndef berechne_ppv(sens: float, spez: float, praev: float) -&gt; float:\n    return (sens * praev) / (sens * praev + (1 - spez) * (1 - praev))\n\n\ndef berechne_npv(sens: float, spez: float, praev: float) -&gt; float:\n    return (spez * (1 - praev)) / (spez * (1 - praev) + (1 - sens) * praev)\n\n\ndef berechne_95_ci(s: float, n: int) -&gt; tuple:\n    lower = s - 1.96 * math.sqrt(s * (1 - s) / n)\n    upper = s + 1.96 * math.sqrt(s * (1 - s) / n)\n    return lower, upper\n\n\ndef berechne_se_4x4(four_by_four_table: FourByFourTable) -&gt; float:\n    return four_by_four_table.a / (four_by_four_table.a + four_by_four_table.c)\n\n\ndef berechne_sp_4x4(four_by_four_table: FourByFourTable) -&gt; float:\n    return four_by_four_table.d / (four_by_four_table.b + four_by_four_table.d)"
+    "text": "Code\nimport math\nfrom typing import Tuple\nfrom collections import namedtuple\nimport plotly.graph_objects as go\nimport plotly.io as pio\n\n\nBENE_COLORS_DARK: Tuple[str, ...] = (\n    \"#47476b\",\n    \"#6B5706\",\n    \"#206260\",\n    \"#93003a\",\n    \"#215F80\",\n    \"#973C2B\",\n    \"#008381\",\n    \"#6d3d3d\",\n    \"#595865\",\n)\npio.templates[\"bene\"] = go.layout.Template(layout=go.Layout(colorway=BENE_COLORS_DARK))\npio.templates.default = \"plotly_white+bene\"\n\nFourByFourTable = namedtuple(\"FourByFourTable\", [\"a\", \"b\", \"c\", \"d\"])\n\ndef berechne_RR (four_x_four: FourByFourTable) -&gt; float:\n    return (four_x_four.a / (four_x_four.a + four_x_four.b)) / (four_x_four.c / (four_x_four.c + four_x_four.d))\n\ndef berechne_SE_ln_RR (four_x_four: FourByFourTable) -&gt; float:\n    return math.sqrt((four_x_four.b/(four_x_four.a*(four_x_four.a+four_x_four.b)))+(four_x_four.d/(four_x_four.c*(four_x_four.c+four_x_four.d))))\n\ndef berechne_95_CI (four_x_four: FourByFourTable) -&gt; Tuple[float, float]:\n    RR = berechne_RR(four_x_four)\n    ln_RR = math.log(RR)\n    SE_ln_RR = berechne_SE_ln_RR(four_x_four)\n    z = 1.96  # 95% confidence interval\n    lower_ln = ln_RR - z * SE_ln_RR\n    upper_ln = ln_RR + z * SE_ln_RR\n    lower_CI = math.exp(lower_ln)\n    upper_CI = math.exp(upper_ln)\n    return lower_CI, upper_CI",
+    "crumbs": [
+      "Woche 3"
+    ]
   },
   {
-    "objectID": "index.html#aufgabe-2-glaukom",
-    "href": "index.html#aufgabe-2-glaukom",
-    "title": "Biostatistik und Studiendesign",
-    "section": "Aufgabe 2: Glaukom",
-    "text": "Aufgabe 2: Glaukom\n\nPrävalenz: 0.9 % = 0.009\nSensitivität: 85 % = 0.85\nSpezifität: 90 % = 0.90\n\n\n\nCode\nprevalence = 0.009\nsensitivity = 0.85\nspecificity = 0.90\n\n\n\n2\n\n\nCode\nppv_screening = berechne_ppv(sensitivity, specificity, prevalence)\nppv_screening\n\n\n0.07166276346604215\n\n\n\n\nCode\nnpv_screening = berechne_npv(sensitivity, specificity, prevalence)\nnpv_screening\n\n\n0.9984886649874056\n\n\n\n\n3\n\n\nCode\npopulation = 100000\ntrue_positives = sensitivity * prevalence * population\nfalse_negatives = (1 - sensitivity) * prevalence * population\nfalse_positives = (1 - specificity) * (1 - prevalence) * population\ntrue_negatives = specificity * (1 - prevalence) * population\ntrue_positives, false_negatives, false_positives, true_negatives\n\n\n(764.9999999999999, 135.0, 9909.999999999998, 89190.0)"
+    "objectID": "woche3.html#aufgabe-2",
+    "href": "woche3.html#aufgabe-2",
+    "title": "Woche 3",
+    "section": "Aufgabe 2",
+    "text": "Aufgabe 2\n\n\nCode\nfour_x_four = FourByFourTable(12, 288, 20, 180)\n\n\n\n1. b\n\\(\\widehat{SE}\\):\n\n\nCode\nf\"{berechne_SE_ln_RR(four_x_four):.2f}\"\n\n\n'0.35'\n\n\n\n\nCode\n\"{:.2f}, {:.2f}\".format(*berechne_95_CI(four_x_four))\n\n\n'0.20, 0.80'\n\n\n\n\n\n\n\nCode\nRR = berechne_RR(four_x_four)\nCI = berechne_95_CI(four_x_four)\n\nfour_x_four_half = FourByFourTable(6, 144, 10, 90)\nRR_half = berechne_RR(four_x_four_half)\nCI_half = berechne_95_CI(four_x_four_half)\n\nfour_x_four_10 = FourByFourTable(120, 2880, 200, 1800)\nRR_10 = berechne_RR(four_x_four_10)\nCI_10 = berechne_95_CI(four_x_four_10)\n\nfig = go.Figure()\ny_axis = [\"n=2500\", \"n=500\", \"n=250\"]\nfig.add_trace( \n    go.Scatter(\n        x=[RR_10, RR, RR_half],\n        y= y_axis,\n        mode=\"markers\",\n        marker=dict(size=10, symbol=\"square\"),\n        error_x=dict(\n            type=\"data\",\n            symmetric=False,\n            array=[CI_10[1] - RR_10, CI[1] - RR, CI_half[1] - RR_half],\n            arrayminus=[RR_10 - CI_10[0], RR - CI[0], RR_half - CI_half[0]],\n        ),\n    )\n)\nfig.add_vline(x=1)\nfig.add_vline(x=0.7, line_dash=\"dash\")\nfig.add_vline(x=1.5, line_dash=\"dash\")\n\nfig.update_layout(\n    xaxis=dict(range=[0, 2]),\n)\n\nfig.show()",
+    "crumbs": [
+      "Woche 3"
+    ]
   },
   {
-    "objectID": "index.html#aufgabe-3",
-    "href": "index.html#aufgabe-3",
-    "title": "Biostatistik und Studiendesign",
-    "section": "Aufgabe 3",
-    "text": "Aufgabe 3\n\n1\n\n\nCode\n# Gegebene Werte aus der Studie (Katz et al., 1993)\nsensitivity_study = 0.836  # Sensitivität des Suprathreshold Visual Field Test\nspecificity_study = 0.749  # Spezifität des Suprathreshold Visual Field Test\n\n# Populationsgröße in der Studie\ntotal_population_study = 5341  \n\n# Anzahl tatsächlich kranker (Glaukomfälle)\ntrue_cases_study = 146  \n\n# Anzahl gesunder Personen\nhealthy_cases_study = total_population_study - true_cases_study  \n\n# Berechnung der Prävalenz in der Studienpopulation\nprevalence_study = true_cases_study / total_population_study  \n\n# Berechnung des positiven prädiktiven Werts (PPV)\nppv_study = berechne_ppv(sensitivity_study, specificity_study, prevalence_study)\n\n# Berechnung des negativen prädiktiven Werts (NPV)\nnpv_study = berechne_npv(sensitivity_study, specificity_study, prevalence_study)\n\nppv_study, npv_study\n\n\n(0.08559320785890051, 0.9938840341977099)\n\n\nPrävalenz bei beiden Test nacheinander. Prävalenz des zweiten Tests ist PPV des ersten Tests.\n\n\nCode\nppv_study_after_positive_screening = berechne_ppv(sensitivity_study, specificity_study, ppv_screening)\nnpv_study_after_positive_screening = berechne_npv(sensitivity_study, specificity_study, ppv_screening)\nppv_study_after_positive_screening, npv_study_after_positive_screening\n\n\n(0.20452517628999506, 0.9833784884837806)\n\n\n\n\n2\n\na\n\n\nCode\n1-npv_study\n\n\n0.006115965802290124\n\n\n\n\nc\n\n\nCode\n1-ppv_study\n\n\n0.9144067921410994\n\n\n\n\n\n3\n\n\nCode\nberechne_95_ci(sensitivity_study, total_population_study), berechne_95_ci(specificity_study, total_population_study)\n\n\n((0.8260695290539164, 0.8459304709460835),\n (0.7373715306646761, 0.7606284693353239))"
-  },
-  {
-    "objectID": "index.html#aufgabe-4",
-    "href": "index.html#aufgabe-4",
-    "title": "Biostatistik und Studiendesign",
+    "objectID": "woche3.html#aufgabe-4",
+    "href": "woche3.html#aufgabe-4",
+    "title": "Woche 3",
     "section": "Aufgabe 4",
-    "text": "Aufgabe 4\n\n2\n\n\nCode\ncutoff_1_44 = FourByFourTable(53, 285, 0, 182)\ncutoff_1_44_se = berechne_se_4x4(cutoff_1_44)\ncutoff_1_44_sp = berechne_sp_4x4(cutoff_1_44)\ncutoff_1_44_se, cutoff_1_44_sp, 1-cutoff_1_44_sp\n\n\n(1.0, 0.3897216274089936, 0.6102783725910064)\n\n\n\n\nCode\ncutoff_1_14 = FourByFourTable(50, 187, 3, 280)\ncutoff_1_14_se = berechne_se_4x4(cutoff_1_14)\ncutoff_1_14_sp = berechne_sp_4x4(cutoff_1_14)\ncutoff_1_14_se, cutoff_1_14_sp, 1-cutoff_1_14_sp\n\n\n(0.9433962264150944, 0.5995717344753747, 0.4004282655246253)\n\n\n\n\nCode\ncutoff_1_02 = FourByFourTable(43, 112, 10, 355)\ncutoff_1_02_se = berechne_se_4x4(cutoff_1_02)\ncutoff_1_02_sp = berechne_sp_4x4(cutoff_1_02)\ncutoff_1_02_se, cutoff_1_02_sp, 1-cutoff_1_02_sp\n\n\n(0.8113207547169812, 0.7601713062098501, 0.23982869379014993)\n\n\n\n\nCode\ncutoff_0_8 = FourByFourTable(34, 47, 19, 420)\ncutoff_0_8_se = berechne_se_4x4(cutoff_0_8)\ncutoff_0_8_sp = berechne_sp_4x4(cutoff_0_8)\ncutoff_0_8_se, cutoff_0_8_sp, 1-cutoff_0_8_sp\n\n\n(0.6415094339622641, 0.8993576017130621, 0.10064239828693788)\n\n\n\n\nCode\ncutoff_0_6 = FourByFourTable(23, 5, 30, 462)\ncutoff_0_6_se = berechne_se_4x4(cutoff_0_6)\ncutoff_0_6_sp = berechne_sp_4x4(cutoff_0_6)\ncutoff_0_6_se, cutoff_0_6_sp, 1-cutoff_0_6_sp\n\n\n(0.4339622641509434, 0.9892933618843683, 0.010706638115631661)\n\n\n\n\nCode\nspecificity = np.array([\n    0,\n    1 - cutoff_0_6_sp,\n    1 - cutoff_0_8_sp,\n    1 - cutoff_1_02_sp,\n    1 - cutoff_1_14_sp,\n    1 - cutoff_1_44_sp,\n    1,\n])\nsensitivity = np.array([\n    0,\n    cutoff_0_6_se,\n    cutoff_0_8_se,\n    cutoff_1_02_se,\n    cutoff_1_14_se,\n    cutoff_1_44_se,\n    1,\n])\ncutoffs = np.array([0, 0.6, 0.8, 1.02, 1.14, 1.44, 2])\n\n# Initialize variables\nbest_cutoff = None\nmax_j = -np.inf\n\n# Loop through each segment between two cutoffs\nfor i in range(len(cutoffs) - 1):\n    C1, C2 = cutoffs[i], cutoffs[i + 1]\n    S1, S2 = sensitivity[i], sensitivity[i + 1]\n    P1, P2 = specificity[i], specificity[i + 1]\n    \n    # Compute the slope for linear interpolation\n    sensitivity_slope = (S2 - S1) / (C2 - C1)\n    specificity_slope = (P2 - P1) / (C2 - C1)\n\n    # Solve for cutoff that maximizes Youden's J in this segment\n    # J(c) = (S1 + sensitivity_slope * (c - C1)) + (P1 + specificity_slope * (c - C1)) - 1\n    # dJ/dc = sensitivity_slope + specificity_slope = 0\n    if sensitivity_slope + specificity_slope != 0:  # Avoid division by zero\n        optimal_c = C1 - (S1 + P1 - 1) / (sensitivity_slope + specificity_slope)\n\n        # Ensure the found cutoff is within the segment\n        if C1 &lt;= optimal_c &lt;= C2:\n            optimal_j = (S1 + sensitivity_slope * (optimal_c - C1)) + \\\n                        (P1 + specificity_slope * (optimal_c - C1)) - 1\n            \n            # Update the best cutoff if this J value is better\n            if optimal_j &gt; max_j:\n                max_j = optimal_j\n                best_cutoff = optimal_c\n                best_sensitivity = sensitivity_slope\n                best_specificity = specificity_slope\n\nprint(f\"Optimal Cutoff (linear): {best_cutoff:.3f}\")\n\n\nOptimal Cutoff (linear): 0.984\n\n\n\n\nCode\nroc_x = [\n    0,\n    1 - cutoff_0_6_sp,\n    1 - cutoff_0_8_sp,\n    1 - cutoff_1_02_sp,\n    1 - cutoff_1_14_sp,\n    1 - cutoff_1_44_sp,\n    1,\n]\nroc_y = [\n    0,\n    cutoff_0_6_se,\n    cutoff_0_8_se,\n    cutoff_1_02_se,\n    cutoff_1_14_se,\n    cutoff_1_44_se,\n    1,\n]\nroc_labels = [\"\", \"0.6 mm²\", \"0.8 mm²\", \"1.02 mm²\", \"1.14 mm²\", \"1.44 mm²\", \"\"]\n\nfig = go.Figure()\nfig.add_shape(\n    type=\"line\", line=dict(dash=\"dash\"), fillcolor=\"black\", x0=0, x1=1, y0=0, y1=1\n)\nfig.add_trace(\n    go.Scatter(\n        x=roc_x,\n        y=roc_y,\n        text=roc_labels,\n        textposition=\"bottom right\",\n        mode=\"lines+markers+text\",\n        fill=\"tozeroy\",\n        fillcolor=\"rgba(71, 71, 107, 0.2)\",\n    )\n)\nfig.update_layout(\n    title=\"ROC Curve RNFL Area\",\n    xaxis_title=\"1 - Spezifität\",\n    yaxis_title=\"Sensitivität\",\n    xaxis=dict(range=[0, 1]),\n    yaxis=dict(range=[0, 1], scaleanchor=\"x\", scaleratio=1),\n)\nfig.write_image(\"roc_curve.svg\")\nfig.show()"
+    "text": "Aufgabe 4\n\na\n\n\nCode\nln_RR = [3.5175, 0.7129, 1.5581, 1.1410, 1.6332]\nSE_ln_RR = [1.4210, 1.2122, 0.5533, 0.3818, 0.3436]\n# Berechnung der Gewichte w_i\nweights = [1 / (se ** 2) for se in SE_ln_RR]\n\n# Berechnung von Summe(w_i * ln(RR)) und Summe(w_i)\nsum_w_lnRR = sum(w * lnrr for w, lnrr in zip(weights, ln_RR))\nsum_w = sum(weights)\n# Berechnung des gepoolten ln(RR)\nln_RR_pool = sum_w_lnRR / sum_w\nRR_pool = math.exp(ln_RR_pool)\n\nf\"{RR_pool:.2f}\"\n\n\n'4.33'\n\n\n\n\nb\n\n\nCode\nf\"{weights[4]:.2f}\"\n\n\n'8.47'",
+    "crumbs": [
+      "Woche 3"
+    ]
   },
   {
-    "objectID": "index.html#aufgabe-7",
-    "href": "index.html#aufgabe-7",
-    "title": "Biostatistik und Studiendesign",
+    "objectID": "woche2.html",
+    "href": "woche2.html",
+    "title": "Woche 2",
+    "section": "",
+    "text": "Code\nimport math\nimport numpy as np\nimport scipy.interpolate as interp\nfrom typing import Tuple\nfrom collections import namedtuple\nimport plotly.graph_objects as go\nimport plotly.io as pio\n\n\nBENE_COLORS_DARK: Tuple[str, ...] = (\n    \"#47476b\",\n    \"#6B5706\",\n    \"#206260\",\n    \"#93003a\",\n    \"#215F80\",\n    \"#973C2B\",\n    \"#008381\",\n    \"#6d3d3d\",\n    \"#595865\",\n)\npio.templates[\"bene\"] = go.layout.Template(layout=go.Layout(colorway=BENE_COLORS_DARK))\npio.templates.default = \"plotly_white+bene\"\n\nFourByFourTable = namedtuple(\"FourByFourTable\", [\"a\", \"b\", \"c\", \"d\"])\n\n\ndef berechne_ppv(sens: float, spez: float, praev: float) -&gt; float:\n    return (sens * praev) / (sens * praev + (1 - spez) * (1 - praev))\n\n\ndef berechne_npv(sens: float, spez: float, praev: float) -&gt; float:\n    return (spez * (1 - praev)) / (spez * (1 - praev) + (1 - sens) * praev)\n\n\ndef berechne_95_ci(s: float, n: int) -&gt; tuple:\n    lower = s - 1.96 * math.sqrt(s * (1 - s) / n)\n    upper = s + 1.96 * math.sqrt(s * (1 - s) / n)\n    return lower, upper\n\n\ndef berechne_se_4x4(four_by_four_table: FourByFourTable) -&gt; float:\n    return four_by_four_table.a / (four_by_four_table.a + four_by_four_table.c)\n\n\ndef berechne_sp_4x4(four_by_four_table: FourByFourTable) -&gt; float:\n    return four_by_four_table.d / (four_by_four_table.b + four_by_four_table.d)",
+    "crumbs": [
+      "Woche 2"
+    ]
+  },
+  {
+    "objectID": "woche2.html#aufgabe-2-glaukom",
+    "href": "woche2.html#aufgabe-2-glaukom",
+    "title": "Woche 2",
+    "section": "Aufgabe 2: Glaukom",
+    "text": "Aufgabe 2: Glaukom\n\nPrävalenz: 0.9 % = 0.009\nSensitivität: 85 % = 0.85\nSpezifität: 90 % = 0.90\n\n\n\nCode\nprevalence = 0.009\nsensitivity = 0.85\nspecificity = 0.90",
+    "crumbs": [
+      "Woche 2"
+    ]
+  },
+  {
+    "objectID": "woche2.html#section",
+    "href": "woche2.html#section",
+    "title": "Woche 2",
+    "section": "2",
+    "text": "2\n\n\nCode\nppv_screening = berechne_ppv(sensitivity, specificity, prevalence)\nppv_screening\n\n\n0.07166276346604215\n\n\n\n\nCode\nnpv_screening = berechne_npv(sensitivity, specificity, prevalence)\nnpv_screening\n\n\n0.9984886649874056",
+    "crumbs": [
+      "Woche 2"
+    ]
+  },
+  {
+    "objectID": "woche2.html#section-1",
+    "href": "woche2.html#section-1",
+    "title": "Woche 2",
+    "section": "3",
+    "text": "3\n\n\nCode\npopulation = 100000\ntrue_positives = sensitivity * prevalence * population\nfalse_negatives = (1 - sensitivity) * prevalence * population\nfalse_positives = (1 - specificity) * (1 - prevalence) * population\ntrue_negatives = specificity * (1 - prevalence) * population\ntrue_positives, false_negatives, false_positives, true_negatives\n\n\n(764.9999999999999, 135.0, 9909.999999999998, 89190.0)",
+    "crumbs": [
+      "Woche 2"
+    ]
+  },
+  {
+    "objectID": "woche2.html#aufgabe-3",
+    "href": "woche2.html#aufgabe-3",
+    "title": "Woche 2",
+    "section": "Aufgabe 3",
+    "text": "Aufgabe 3",
+    "crumbs": [
+      "Woche 2"
+    ]
+  },
+  {
+    "objectID": "woche2.html#section-2",
+    "href": "woche2.html#section-2",
+    "title": "Woche 2",
+    "section": "1",
+    "text": "1\n\n\nCode\n# Gegebene Werte aus der Studie (Katz et al., 1993)\nsensitivity_study = 0.836  # Sensitivität des Suprathreshold Visual Field Test\nspecificity_study = 0.749  # Spezifität des Suprathreshold Visual Field Test\n\n# Populationsgröße in der Studie\ntotal_population_study = 5341  \n\n# Anzahl tatsächlich kranker (Glaukomfälle)\ntrue_cases_study = 146  \n\n# Anzahl gesunder Personen\nhealthy_cases_study = total_population_study - true_cases_study  \n\n# Berechnung der Prävalenz in der Studienpopulation\nprevalence_study = true_cases_study / total_population_study  \n\n# Berechnung des positiven prädiktiven Werts (PPV)\nppv_study = berechne_ppv(sensitivity_study, specificity_study, prevalence_study)\n\n# Berechnung des negativen prädiktiven Werts (NPV)\nnpv_study = berechne_npv(sensitivity_study, specificity_study, prevalence_study)\n\nppv_study, npv_study\n\n\n(0.08559320785890051, 0.9938840341977099)\n\n\nPrävalenz bei beiden Test nacheinander. Prävalenz des zweiten Tests ist PPV des ersten Tests.\n\n\nCode\nppv_study_after_positive_screening = berechne_ppv(sensitivity_study, specificity_study, ppv_screening)\nnpv_study_after_positive_screening = berechne_npv(sensitivity_study, specificity_study, ppv_screening)\nppv_study_after_positive_screening, npv_study_after_positive_screening\n\n\n(0.20452517628999506, 0.9833784884837806)",
+    "crumbs": [
+      "Woche 2"
+    ]
+  },
+  {
+    "objectID": "woche2.html#section-3",
+    "href": "woche2.html#section-3",
+    "title": "Woche 2",
+    "section": "2",
+    "text": "2\n\na\n\n\nCode\n1-npv_study\n\n\n0.006115965802290124\n\n\n\n\nc\n\n\nCode\n1-ppv_study\n\n\n0.9144067921410994",
+    "crumbs": [
+      "Woche 2"
+    ]
+  },
+  {
+    "objectID": "woche2.html#section-4",
+    "href": "woche2.html#section-4",
+    "title": "Woche 2",
+    "section": "3",
+    "text": "3\n\n\nCode\nberechne_95_ci(sensitivity_study, total_population_study), berechne_95_ci(specificity_study, total_population_study)\n\n\n((0.8260695290539164, 0.8459304709460835),\n (0.7373715306646761, 0.7606284693353239))",
+    "crumbs": [
+      "Woche 2"
+    ]
+  },
+  {
+    "objectID": "woche2.html#aufgabe-4",
+    "href": "woche2.html#aufgabe-4",
+    "title": "Woche 2",
+    "section": "Aufgabe 4",
+    "text": "Aufgabe 4",
+    "crumbs": [
+      "Woche 2"
+    ]
+  },
+  {
+    "objectID": "woche2.html#section-5",
+    "href": "woche2.html#section-5",
+    "title": "Woche 2",
+    "section": "2",
+    "text": "2\n\n\nCode\ncutoff_1_44 = FourByFourTable(53, 285, 0, 182)\ncutoff_1_44_se = berechne_se_4x4(cutoff_1_44)\ncutoff_1_44_sp = berechne_sp_4x4(cutoff_1_44)\ncutoff_1_44_se, cutoff_1_44_sp, 1-cutoff_1_44_sp\n\n\n(1.0, 0.3897216274089936, 0.6102783725910064)\n\n\n\n\nCode\ncutoff_1_14 = FourByFourTable(50, 187, 3, 280)\ncutoff_1_14_se = berechne_se_4x4(cutoff_1_14)\ncutoff_1_14_sp = berechne_sp_4x4(cutoff_1_14)\ncutoff_1_14_se, cutoff_1_14_sp, 1-cutoff_1_14_sp\n\n\n(0.9433962264150944, 0.5995717344753747, 0.4004282655246253)\n\n\n\n\nCode\ncutoff_1_02 = FourByFourTable(43, 112, 10, 355)\ncutoff_1_02_se = berechne_se_4x4(cutoff_1_02)\ncutoff_1_02_sp = berechne_sp_4x4(cutoff_1_02)\ncutoff_1_02_se, cutoff_1_02_sp, 1-cutoff_1_02_sp\n\n\n(0.8113207547169812, 0.7601713062098501, 0.23982869379014993)\n\n\n\n\nCode\ncutoff_0_8 = FourByFourTable(34, 47, 19, 420)\ncutoff_0_8_se = berechne_se_4x4(cutoff_0_8)\ncutoff_0_8_sp = berechne_sp_4x4(cutoff_0_8)\ncutoff_0_8_se, cutoff_0_8_sp, 1-cutoff_0_8_sp\n\n\n(0.6415094339622641, 0.8993576017130621, 0.10064239828693788)\n\n\n\n\nCode\ncutoff_0_6 = FourByFourTable(23, 5, 30, 462)\ncutoff_0_6_se = berechne_se_4x4(cutoff_0_6)\ncutoff_0_6_sp = berechne_sp_4x4(cutoff_0_6)\ncutoff_0_6_se, cutoff_0_6_sp, 1-cutoff_0_6_sp\n\n\n(0.4339622641509434, 0.9892933618843683, 0.010706638115631661)\n\n\n\n\nCode\nspecificity = np.array([\n    0,\n    1 - cutoff_0_6_sp,\n    1 - cutoff_0_8_sp,\n    1 - cutoff_1_02_sp,\n    1 - cutoff_1_14_sp,\n    1 - cutoff_1_44_sp,\n    1,\n])\nsensitivity = np.array([\n    0,\n    cutoff_0_6_se,\n    cutoff_0_8_se,\n    cutoff_1_02_se,\n    cutoff_1_14_se,\n    cutoff_1_44_se,\n    1,\n])\ncutoffs = np.array([0, 0.6, 0.8, 1.02, 1.14, 1.44, 2])\n\n# Initialize variables\nbest_cutoff = None\nmax_j = -np.inf\n\n# Loop through each segment between two cutoffs\nfor i in range(len(cutoffs) - 1):\n    C1, C2 = cutoffs[i], cutoffs[i + 1]\n    S1, S2 = sensitivity[i], sensitivity[i + 1]\n    P1, P2 = specificity[i], specificity[i + 1]\n    \n    # Compute the slope for linear interpolation\n    sensitivity_slope = (S2 - S1) / (C2 - C1)\n    specificity_slope = (P2 - P1) / (C2 - C1)\n\n    # Solve for cutoff that maximizes Youden's J in this segment\n    # J(c) = (S1 + sensitivity_slope * (c - C1)) + (P1 + specificity_slope * (c - C1)) - 1\n    # dJ/dc = sensitivity_slope + specificity_slope = 0\n    if sensitivity_slope + specificity_slope != 0:  # Avoid division by zero\n        optimal_c = C1 - (S1 + P1 - 1) / (sensitivity_slope + specificity_slope)\n\n        # Ensure the found cutoff is within the segment\n        if C1 &lt;= optimal_c &lt;= C2:\n            optimal_j = (S1 + sensitivity_slope * (optimal_c - C1)) + \\\n                        (P1 + specificity_slope * (optimal_c - C1)) - 1\n            \n            # Update the best cutoff if this J value is better\n            if optimal_j &gt; max_j:\n                max_j = optimal_j\n                best_cutoff = optimal_c\n                best_sensitivity = sensitivity_slope\n                best_specificity = specificity_slope\n\nprint(f\"Optimal Cutoff (linear): {best_cutoff:.3f}\")\n\n\nOptimal Cutoff (linear): 0.984\n\n\n\n\nCode\nroc_x = [\n    0,\n    1 - cutoff_0_6_sp,\n    1 - cutoff_0_8_sp,\n    1 - cutoff_1_02_sp,\n    1 - cutoff_1_14_sp,\n    1 - cutoff_1_44_sp,\n    1,\n]\nroc_y = [\n    0,\n    cutoff_0_6_se,\n    cutoff_0_8_se,\n    cutoff_1_02_se,\n    cutoff_1_14_se,\n    cutoff_1_44_se,\n    1,\n]\nroc_labels = [\"\", \"0.6 mm²\", \"0.8 mm²\", \"1.02 mm²\", \"1.14 mm²\", \"1.44 mm²\", \"\"]\n\nfig = go.Figure()\nfig.add_shape(\n    type=\"line\", line=dict(dash=\"dash\"), fillcolor=\"black\", x0=0, x1=1, y0=0, y1=1\n)\nfig.add_trace(\n    go.Scatter(\n        x=roc_x,\n        y=roc_y,\n        text=roc_labels,\n        textposition=\"bottom right\",\n        mode=\"lines+markers+text\",\n        fill=\"tozeroy\",\n        fillcolor=\"rgba(71, 71, 107, 0.2)\",\n    )\n)\nfig.update_layout(\n    title=\"ROC Curve RNFL Area\",\n    xaxis_title=\"1 - Spezifität\",\n    yaxis_title=\"Sensitivität\",\n    xaxis=dict(range=[0, 1]),\n    yaxis=dict(range=[0, 1], scaleanchor=\"x\", scaleratio=1),\n)\nfig.show()",
+    "crumbs": [
+      "Woche 2"
+    ]
+  },
+  {
+    "objectID": "woche2.html#aufgabe-7",
+    "href": "woche2.html#aufgabe-7",
+    "title": "Woche 2",
     "section": "Aufgabe 7",
-    "text": "Aufgabe 7\n\n2\n\n\nCode\na, b, c, d = 30, 366, 56, 352\n\np1 = a / (a + b)\np2 = c / (c + d)\n\np1, p2\n\n\n(0.07575757575757576, 0.13725490196078433)\n\n\n\n\nCode\np = (a + c) / (a + b + c + d)\nSE = math.sqrt((p * (1 - p) / (a + b)) + (p * (1 - p) / (c + d)))\n\nSE\n\n\n0.02180247257454774\n\n\n\n\nCode\nT = (p1 - p2) / SE\nT\n\n\n-2.820658344732913"
+    "text": "Aufgabe 7",
+    "crumbs": [
+      "Woche 2"
+    ]
+  },
+  {
+    "objectID": "woche2.html#section-6",
+    "href": "woche2.html#section-6",
+    "title": "Woche 2",
+    "section": "2",
+    "text": "2\n\n\nCode\na, b, c, d = 30, 366, 56, 352\n\np1 = a / (a + b)\np2 = c / (c + d)\n\np1, p2\n\n\n(0.07575757575757576, 0.13725490196078433)\n\n\n\n\nCode\np = (a + c) / (a + b + c + d)\nSE = math.sqrt((p * (1 - p) / (a + b)) + (p * (1 - p) / (c + d)))\n\nSE\n\n\n0.02180247257454774\n\n\n\n\nCode\nT = (p1 - p2) / SE\nT\n\n\n-2.820658344732913",
+    "crumbs": [
+      "Woche 2"
+    ]
   }
 ]
