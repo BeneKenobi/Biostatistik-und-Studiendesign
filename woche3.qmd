@@ -65,6 +65,7 @@ f"{berechne_SE_ln_RR(four_x_four):.2f}"
 2.
 
 ```{python}
+
 RR = berechne_RR(four_x_four)
 CI = berechne_95_CI(four_x_four)
 
@@ -78,10 +79,10 @@ CI_10 = berechne_95_CI(four_x_four_10)
 
 fig = go.Figure()
 y_axis = ["n=2500", "n=500", "n=250"]
-fig.add_trace( 
+fig.add_trace(
     go.Scatter(
         x=[RR_10, RR, RR_half],
-        y= y_axis,
+        y=y_axis,
         mode="markers",
         marker=dict(size=10, symbol="square"),
         error_x=dict(
@@ -96,9 +97,7 @@ fig.add_vline(x=1)
 fig.add_vline(x=0.7, line_dash="dash")
 fig.add_vline(x=1.5, line_dash="dash")
 
-fig.update_layout(
-    xaxis=dict(range=[0, 2]),
-)
+fig.update_layout(xaxis=dict(range=[0, 2]), height=150)
 
 fig.show()
 ```
@@ -125,4 +124,34 @@ f"{RR_pool:.2f}"
 ### b
 ```{python}
 f"{weights[4]:.2f}"
+```
+
+## Aufgabe 5
+
+### a
+
+```{python}
+four_x_four = FourByFourTable(
+    round(295 * 0.197),
+    round(295 - (295 * 0.197)),
+    round(143 * 0.194),
+    round(143 - (143 * 0.194)),
+)
+four_x_four
+```
+
+### b
+
+```{python}
+RR = berechne_RR(four_x_four)
+
+f"{RR:.2f}"
+```
+
+### c
+
+```{python}
+CI = berechne_95_CI(four_x_four)
+
+f"{CI[0]:.2f}, {CI[1]:.2f}"
 ```
