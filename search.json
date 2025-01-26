@@ -14,7 +14,7 @@
     "href": "woche3.html#aufgabe-2",
     "title": "Woche 3",
     "section": "Aufgabe 2",
-    "text": "Aufgabe 2\n\n\nCode\nfour_x_four = FourByFourTable(12, 288, 20, 180)\n\n\n\n1. b\n\\(\\widehat{SE}\\):\n\n\nCode\nf\"{berechne_SE_ln_RR(four_x_four):.2f}\"\n\n\n'0.35'\n\n\n\n\nCode\n\"{:.2f}, {:.2f}\".format(*berechne_95_CI(four_x_four))\n\n\n'0.20, 0.80'\n\n\n\n\n\n\n\nCode\nRR = berechne_RR(four_x_four)\nCI = berechne_95_CI(four_x_four)\n\nfour_x_four_half = FourByFourTable(6, 144, 10, 90)\nRR_half = berechne_RR(four_x_four_half)\nCI_half = berechne_95_CI(four_x_four_half)\n\nfour_x_four_10 = FourByFourTable(120, 2880, 200, 1800)\nRR_10 = berechne_RR(four_x_four_10)\nCI_10 = berechne_95_CI(four_x_four_10)\n\nfig = go.Figure()\ny_axis = [\"n=2500\", \"n=500\", \"n=250\"]\nfig.add_trace( \n    go.Scatter(\n        x=[RR_10, RR, RR_half],\n        y= y_axis,\n        mode=\"markers\",\n        marker=dict(size=10, symbol=\"square\"),\n        error_x=dict(\n            type=\"data\",\n            symmetric=False,\n            array=[CI_10[1] - RR_10, CI[1] - RR, CI_half[1] - RR_half],\n            arrayminus=[RR_10 - CI_10[0], RR - CI[0], RR_half - CI_half[0]],\n        ),\n    )\n)\nfig.add_vline(x=1)\nfig.add_vline(x=0.7, line_dash=\"dash\")\nfig.add_vline(x=1.5, line_dash=\"dash\")\n\nfig.update_layout(\n    xaxis=dict(range=[0, 2]),\n)\n\nfig.show()",
+    "text": "Aufgabe 2\n\n\nCode\nfour_x_four = FourByFourTable(12, 288, 20, 180)\n\n\n\n1. b\n\\(\\widehat{SE}\\):\n\n\nCode\nf\"{berechne_SE_ln_RR(four_x_four):.2f}\"\n\n\n'0.35'\n\n\n\n\nCode\n\"{:.2f}, {:.2f}\".format(*berechne_95_CI(four_x_four))\n\n\n'0.20, 0.80'\n\n\n\n\n\n\n\nCode\nRR = berechne_RR(four_x_four)\nCI = berechne_95_CI(four_x_four)\n\nfour_x_four_half = FourByFourTable(6, 144, 10, 90)\nRR_half = berechne_RR(four_x_four_half)\nCI_half = berechne_95_CI(four_x_four_half)\n\nfour_x_four_10 = FourByFourTable(120, 2880, 200, 1800)\nRR_10 = berechne_RR(four_x_four_10)\nCI_10 = berechne_95_CI(four_x_four_10)\n\nfig = go.Figure()\ny_axis = [\"n=2500\", \"n=500\", \"n=250\"]\nfig.add_trace(\n    go.Scatter(\n        x=[RR_10, RR, RR_half],\n        y=y_axis,\n        mode=\"markers\",\n        marker=dict(size=10, symbol=\"square\"),\n        error_x=dict(\n            type=\"data\",\n            symmetric=False,\n            array=[CI_10[1] - RR_10, CI[1] - RR, CI_half[1] - RR_half],\n            arrayminus=[RR_10 - CI_10[0], RR - CI[0], RR_half - CI_half[0]],\n        ),\n    )\n)\nfig.add_vline(x=1)\nfig.add_vline(x=0.7, line_dash=\"dash\")\nfig.add_vline(x=1.5, line_dash=\"dash\")\n\nfig.update_layout(xaxis=dict(range=[0, 2]), height=150)\n\nfig.show()",
     "crumbs": [
       "Woche 3"
     ]
@@ -25,6 +25,16 @@
     "title": "Woche 3",
     "section": "Aufgabe 4",
     "text": "Aufgabe 4\n\na\n\n\nCode\nln_RR = [3.5175, 0.7129, 1.5581, 1.1410, 1.6332]\nSE_ln_RR = [1.4210, 1.2122, 0.5533, 0.3818, 0.3436]\n# Berechnung der Gewichte w_i\nweights = [1 / (se ** 2) for se in SE_ln_RR]\n\n# Berechnung von Summe(w_i * ln(RR)) und Summe(w_i)\nsum_w_lnRR = sum(w * lnrr for w, lnrr in zip(weights, ln_RR))\nsum_w = sum(weights)\n# Berechnung des gepoolten ln(RR)\nln_RR_pool = sum_w_lnRR / sum_w\nRR_pool = math.exp(ln_RR_pool)\n\nf\"{RR_pool:.2f}\"\n\n\n'4.33'\n\n\n\n\nb\n\n\nCode\nf\"{weights[4]:.2f}\"\n\n\n'8.47'",
+    "crumbs": [
+      "Woche 3"
+    ]
+  },
+  {
+    "objectID": "woche3.html#aufgabe-5",
+    "href": "woche3.html#aufgabe-5",
+    "title": "Woche 3",
+    "section": "Aufgabe 5",
+    "text": "Aufgabe 5\n\na\n\n\nCode\nfour_x_four = FourByFourTable(\n    round(295 * 0.197),\n    round(295 - (295 * 0.197)),\n    round(143 * 0.194),\n    round(143 - (143 * 0.194)),\n)\nfour_x_four\n\n\nFourByFourTable(a=58, b=237, c=28, d=115)\n\n\n\n\nb\n\n\nCode\nRR = berechne_RR(four_x_four)\n\nf\"{RR:.2f}\"\n\n\n'1.00'\n\n\n\n\nc\n\n\nCode\nCI = berechne_95_CI(four_x_four)\n\nf\"{CI[0]:.2f}, {CI[1]:.2f}\"\n\n\n'0.67, 1.50'",
     "crumbs": [
       "Woche 3"
     ]
