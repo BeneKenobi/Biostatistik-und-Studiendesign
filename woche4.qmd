@@ -1,0 +1,102 @@
+---
+title: "Woche 4"
+subtitle: "Statistischer Analyse Plan (SAP)"
+number-sections: true
+toc: false
+---
+
+## Einleitung
+
+Es wird der *Pima Indians Diabetes Database*-Datensatz [@UCIMachineLearning2016PimaIndiansDiabetes] von Kaggle verwendet.
+
+### Hintergrund
+
+- *Diabetes mellitus Typ 2* ist eine chronische Erkrankung mit hoher Prävalenz, insbesondere bei bestimmten Bevölkerungsgruppen.
+- Pima-Indianerinnen weisen eine der weltweit höchsten Raten an Typ-2-Diabetes auf.
+- Die Identifikation von Risikofaktoren kann zur Prävention und Früherkennung beitragen.
+- Der verfügbare Datensatz ermöglicht die Analyse potenzieller Zusammenhänge zwischen verschiedenen Gesundheitsparametern und dem Auftreten von Diabetes.
+
+## Studiendesign
+
+### Beschreibung des Studientyps
+
+**Cross-Sectional Study (Querschnittsstudie)**: Der Datensatz enthält Informationen über Gesundheitsparameter und den Diabetesstatus, die zu einem bestimmten Zeitpunkt erfasst wurden.
+
+## Fragestellung und Ziele
+
+### Konkrete Forschungsfragen oder Hypothesen.
+
+**$H_0$**: Es besteht eine Assoziation zwischen dem Body-Mass-Index (BMI) und dem Auftreten von Typ-2-Diabetes bei Pima-Indianerinnen.
+
+### Primäres Ziel der Studie und eventuelle sekundäre Ziele.
+
+**Primäres Ziel**: Untersuchung der Beziehung zwischen BMI und Diabetes.
+
+**Sekundäre Ziele**: Untersuchung der weiteren im Datensatz enthaltenen Gesundheitsparameter und deren mögliche Assoziation mit Diabetes.
+
+## Endpunkte
+
+### Primärer Endpunkt (Zielvariable): Definition
+
+- **Diabetesstatus**: Dichotome Variable (0 = kein Diabetes, 1 = Diabetes)
+
+### Sekundäre Endpunkte: Definition
+
+- **Messwerte der unabhängigen Variablen**: 
+    1. Body-Mass-Index (BMI)
+    2. Anzahl der Schwangerschaften
+    3. Glukosekonzentration im Plasma
+    4. Blutdruck
+    5. Hautdicke (Trizeps)
+    6. Insulin
+    7. Pedigree-Faktor
+    8. Alter
+
+## Studienpopulation und analysierte Subgruppen
+
+### Population 
+
+**Pima-Indianerinnen ab 21 Jahren**: 768.
+
+### Subgruppen
+
+- **Altersgruppen**: z.B. <30 Jahre, 30–40 Jahre, >40 Jahre.
+- **BMI-Kategorien**: Normalgewicht, Übergewicht, Adipositas.
+- **Anzahl der Schwangerschaften**: 0, 1–3, >3 Schwangerschaften.
+
+## Analyse (primärer & sekundäre Entpunkte)
+
+### Beschreibung der geeigneten Methode
+
+- **Deskriptive Statistik**: Mittelwerte, Standardabweichungen, Verteilungsanalysen der Variablen.
+- **Bivariate Analysen**: Chi-Quadrat-Test für kategoriale Variablen, t-Test oder ANOVA für kontinuierliche Variablen.
+- **Logistische Regression** zur Bestimmung der Odds Ratios für das Auftreten von Diabetes in Bezug auf Risikofaktoren.
+- **Konfidenzintervalle** und **p-Werte** zur Beurteilung der statistischen Signifikanz.
+
+### Muss nach möglichen Confoundern adjustiert werden?
+
+- Ja, berücksichtigung von Wechselwirkungen zwischen Variablen.
+
+### Umgang mit fehlenden Daten
+
+Ausschluss von Fällen mit fehlenden Werten in Schlüsselvariablen, falls erforderlich.
+
+## Berichterstattung und Interpretation
+
+### Mögliche Präsentation der Ergebnisse (Tabellen, Grafiken)
+
+- **Tabellen**:
+  - Deskriptive Statistiken der Studienpopulation.
+  - Ergebnisse der logistischen Regression (Odds Ratios, Konfidenzintervalle, p-Werte).
+
+- **Grafiken**:
+  - Boxplots oder Histogramme zur Visualisierung von Verteilungen der Variablen.
+  - Forest Plot für die Darstellung der Odds Ratios.
+
+### Hinweise auf Limitation und mögliche Verzerrungen
+
+- **Querschnittsdesign** ermöglicht keine Aussage über Kausalität.
+- **Selektionsbias** durch spezifische Population (Ergebnisse nicht ohne Weiteres auf andere Gruppen übertragbar).
+- **Messfehler** oder Ungenauigkeiten in den erhobenen Daten.
+- **Confounder**: Nicht berücksichtigte Variablen (z.B. Lebensstil).
+- **Informationsbias** durch Selbstangaben oder fehlerhafte Messungen.

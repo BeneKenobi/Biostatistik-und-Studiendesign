@@ -4,10 +4,10 @@ project:
 author:
   - name: Benedikt Schnur
     orcid: 0000-0002-1977-7878
-    affiliations:
-      - name: Medizinische Hochschule Hannover (MHH)
-        department: Institut für Humangenetik
-        url: https://www.mhh.de/humangenetik
+    # affiliations:
+    #   - name: Medizinische Hochschule Hannover (MHH)
+    #     department: Institut für Humangenetik
+    #     url: https://www.mhh.de/humangenetik
 
 lang: "de"
 
@@ -23,7 +23,9 @@ format:
     theme: darkly
     highlight-style: gruvbox
     css: styles.css
-    mainfont: "'Seravek', 'Gill Sans Nova', 'Ubuntu', 'Calibri', 'DejaVu Sans', 'source-sans-pro', 'sans-serif'"
+    # mainfont: "'Seravek', 'Gill Sans Nova', 'Ubuntu', 'Calibri', 'DejaVu Sans', 'source-sans-pro', 'sans-serif'"
+    mainfont: "'Charter', 'Bitstream Charte', 'Sitka Text', 'Cambria', 'serif'"
+    linkcolor: "#7171A7"
     tbl-cap-location: bottom
     toc: true
     toc-depth: 2
@@ -41,3 +43,5 @@ format:
 image: "preview.png"
 open-graph: true
 twitter-card: true
+bibliography: references.bib
+csl: ieee.csl
