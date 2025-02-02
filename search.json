@@ -158,5 +158,85 @@
     "crumbs": [
       "Woche 2"
     ]
+  },
+  {
+    "objectID": "woche4.html",
+    "href": "woche4.html",
+    "title": "Woche 4",
+    "section": "",
+    "text": "Es wird der Pima Indians Diabetes Database-Datensatz [1] von Kaggle verwendet.\n\n\n\nDiabetes mellitus Typ 2 ist eine chronische Erkrankung mit hoher Prävalenz, insbesondere bei bestimmten Bevölkerungsgruppen.\nPima-Indianerinnen weisen eine der weltweit höchsten Raten an Typ-2-Diabetes auf.\nDie Identifikation von Risikofaktoren kann zur Prävention und Früherkennung beitragen.\nDer verfügbare Datensatz ermöglicht die Analyse potenzieller Zusammenhänge zwischen verschiedenen Gesundheitsparametern und dem Auftreten von Diabetes.",
+    "crumbs": [
+      "Woche 4"
+    ]
+  },
+  {
+    "objectID": "woche4.html#einleitung",
+    "href": "woche4.html#einleitung",
+    "title": "Woche 4",
+    "section": "",
+    "text": "Es wird der Pima Indians Diabetes Database-Datensatz [1] von Kaggle verwendet.\n\n\n\nDiabetes mellitus Typ 2 ist eine chronische Erkrankung mit hoher Prävalenz, insbesondere bei bestimmten Bevölkerungsgruppen.\nPima-Indianerinnen weisen eine der weltweit höchsten Raten an Typ-2-Diabetes auf.\nDie Identifikation von Risikofaktoren kann zur Prävention und Früherkennung beitragen.\nDer verfügbare Datensatz ermöglicht die Analyse potenzieller Zusammenhänge zwischen verschiedenen Gesundheitsparametern und dem Auftreten von Diabetes.",
+    "crumbs": [
+      "Woche 4"
+    ]
+  },
+  {
+    "objectID": "woche4.html#studiendesign",
+    "href": "woche4.html#studiendesign",
+    "title": "Woche 4",
+    "section": "2 Studiendesign",
+    "text": "2 Studiendesign\n\n2.1 Beschreibung des Studientyps\nCross-Sectional Study (Querschnittsstudie): Der Datensatz enthält Informationen über Gesundheitsparameter und den Diabetesstatus, die zu einem bestimmten Zeitpunkt erfasst wurden.",
+    "crumbs": [
+      "Woche 4"
+    ]
+  },
+  {
+    "objectID": "woche4.html#fragestellung-und-ziele",
+    "href": "woche4.html#fragestellung-und-ziele",
+    "title": "Woche 4",
+    "section": "3 Fragestellung und Ziele",
+    "text": "3 Fragestellung und Ziele\n\n3.1 Konkrete Forschungsfragen oder Hypothesen.\n\\(H_0\\): Es besteht eine Assoziation zwischen dem Body-Mass-Index (BMI) und dem Auftreten von Typ-2-Diabetes bei Pima-Indianerinnen.\n\n\n3.2 Primäres Ziel der Studie und eventuelle sekundäre Ziele.\nPrimäres Ziel: Untersuchung der Beziehung zwischen BMI und Diabetes.\nSekundäre Ziele: Untersuchung der weiteren im Datensatz enthaltenen Gesundheitsparameter und deren mögliche Assoziation mit Diabetes.",
+    "crumbs": [
+      "Woche 4"
+    ]
+  },
+  {
+    "objectID": "woche4.html#endpunkte",
+    "href": "woche4.html#endpunkte",
+    "title": "Woche 4",
+    "section": "4 Endpunkte",
+    "text": "4 Endpunkte\n\n4.1 Primärer Endpunkt (Zielvariable): Definition\n\nDiabetesstatus: Dichotome Variable (0 = kein Diabetes, 1 = Diabetes)\n\n\n\n4.2 Sekundäre Endpunkte: Definition\n\nMesswerte der unabhängigen Variablen:\n\nBody-Mass-Index (BMI)\nAnzahl der Schwangerschaften\nGlukosekonzentration im Plasma\nBlutdruck\nHautdicke (Trizeps)\nInsulin\nPedigree-Faktor\nAlter",
+    "crumbs": [
+      "Woche 4"
+    ]
+  },
+  {
+    "objectID": "woche4.html#studienpopulation-und-analysierte-subgruppen",
+    "href": "woche4.html#studienpopulation-und-analysierte-subgruppen",
+    "title": "Woche 4",
+    "section": "5 Studienpopulation und analysierte Subgruppen",
+    "text": "5 Studienpopulation und analysierte Subgruppen\n\n5.1 Population\nPima-Indianerinnen ab 21 Jahren: 768.\n\n\n5.2 Subgruppen\n\nAltersgruppen: z.B. &lt;30 Jahre, 30–40 Jahre, &gt;40 Jahre.\nBMI-Kategorien: Normalgewicht, Übergewicht, Adipositas.\nAnzahl der Schwangerschaften: 0, 1–3, &gt;3 Schwangerschaften.",
+    "crumbs": [
+      "Woche 4"
+    ]
+  },
+  {
+    "objectID": "woche4.html#analyse-primärer-sekundäre-entpunkte",
+    "href": "woche4.html#analyse-primärer-sekundäre-entpunkte",
+    "title": "Woche 4",
+    "section": "6 Analyse (primärer & sekundäre Entpunkte)",
+    "text": "6 Analyse (primärer & sekundäre Entpunkte)\n\n6.1 Beschreibung der geeigneten Methode\n\nDeskriptive Statistik: Mittelwerte, Standardabweichungen, Verteilungsanalysen der Variablen.\nBivariate Analysen: Chi-Quadrat-Test für kategoriale Variablen, t-Test oder ANOVA für kontinuierliche Variablen.\nLogistische Regression zur Bestimmung der Odds Ratios für das Auftreten von Diabetes in Bezug auf Risikofaktoren.\nKonfidenzintervalle und p-Werte zur Beurteilung der statistischen Signifikanz.\n\n\n\n6.2 Muss nach möglichen Confoundern adjustiert werden?\n\nJa, berücksichtigung von Wechselwirkungen zwischen Variablen.\n\n\n\n6.3 Umgang mit fehlenden Daten\nAusschluss von Fällen mit fehlenden Werten in Schlüsselvariablen, falls erforderlich.",
+    "crumbs": [
+      "Woche 4"
+    ]
+  },
+  {
+    "objectID": "woche4.html#berichterstattung-und-interpretation",
+    "href": "woche4.html#berichterstattung-und-interpretation",
+    "title": "Woche 4",
+    "section": "7 Berichterstattung und Interpretation",
+    "text": "7 Berichterstattung und Interpretation\n\n7.1 Mögliche Präsentation der Ergebnisse (Tabellen, Grafiken)\n\nTabellen:\n\nDeskriptive Statistiken der Studienpopulation.\nErgebnisse der logistischen Regression (Odds Ratios, Konfidenzintervalle, p-Werte).\n\nGrafiken:\n\nBoxplots oder Histogramme zur Visualisierung von Verteilungen der Variablen.\nForest Plot für die Darstellung der Odds Ratios.\n\n\n\n\n7.2 Hinweise auf Limitation und mögliche Verzerrungen\n\nQuerschnittsdesign ermöglicht keine Aussage über Kausalität.\nSelektionsbias durch spezifische Population (Ergebnisse nicht ohne Weiteres auf andere Gruppen übertragbar).\nMessfehler oder Ungenauigkeiten in den erhobenen Daten.\nConfounder: Nicht berücksichtigte Variablen (z.B. Lebensstil).\nInformationsbias durch Selbstangaben oder fehlerhafte Messungen.",
+    "crumbs": [
+      "Woche 4"
+    ]
   }
 ]
