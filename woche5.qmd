@@ -1,0 +1,641 @@
+---
+title: "Querschnittsstudie zum Zusammenhang zwischen BMI und Diabetes-Typ-2 bei Pima-Indianerinnen"
+subtitle: "Woche 5"
+number-sections: true
+toc: true
+toc-depth: 3
+code-fold: true
+---
+
+## Einleitung
+
+Diese Analyse untersucht den Zusammenhang zwischen Body-Mass-Index (BMI) und dem Auftreten von Diabetes-Typ-2 bei Pima-Indianerinnen basierend auf einem Datensatz von Kaggle [@UCIMachineLearning2016PimaIndiansDiabetes]. Die Haupthypothese ist:
+
+$H_0$: Es besteht keine Assoziation zwischen dem Body-Mass-Index (BMI) und dem Auftreten von Diabetes-Typ-2 bei Pima-Indianerinnen.
+
+Neben dem primären Ziel der BMI-Analyse werden auch sekundäre Endpunkte wie Glukosekonzentration, Blutdruck, Hautdicke, Insulin, Alter und Schwangerschaftsanzahl untersucht.
+
+## Methoden
+
+### Studiendesign
+- Querschnittsstudie mit retrospektiver Datenanalyse
+- Datenerhebung: Sekundärdatenauswertung des Pima-Indianer-Datensatzes
+
+### Studienpopulation
+- Einschlusskriterien: Erwachsene weibliche Pima-Indianerinnen
+- Ausschlusskriterien: Fehlende BMI-Werte
+
+### Analysemethoden
+- Deskriptive Statistik: Mittelwerte, Standardabweichungen, Häufigkeiten
+- Chi-Quadrat-Tests: Assoziation zwischen kategorialen Variablen und Diabetes-Status
+- T-Tests: Unterschiede in kontinuierlichen Variablen zwischen Diabetikerinnen und Nicht-Diabetikerinnen
+- Logistische Regression: Berechnung von Odds Ratios für BMI und andere Variablen
+- ROC-Analyse: Bewertung der Modellleistung für BMI
+
+## Ergebnisse
+
+### Datenaufbereitung und initiale Datenanalyse (IDA)
+
+```{python }
+# | label: setup
+
+# import libraries
+import pandas as pd
+from itables import init_notebook_mode, show
+import plotly.graph_objects as go
+import plotly.io as pio
+from typing import Tuple
+import statsmodels.api as sm
+import numpy as np
+from sklearn.metrics import roc_curve, auc
+from scipy.stats import chi2_contingency, ttest_ind
+import matplotlib
+
+init_notebook_mode(all_interactive=True)
+
+# Define color palette
+BENE_COLORS_DARK: Tuple[str, ...] = (
+    "#47476b",
+    "#6B5706",
+    "#206260",
+    "#93003a",
+    "#215F80",
+    "#973C2B",
+    "#008381",
+    "#6d3d3d",
+    "#595865",
+)
+BENE_COLORS_LIGHT: Tuple[str, ...] = (
+    "#7171A7",
+    "#B29211",
+    "#3BA4A0",
+    "#E80060",
+    "#3D9ED2",
+    "#FC6914",
+    "#00B2B0",
+    "#A96262",
+    "#9593A8",
+)
+
+pio.templates["bene"] = go.layout.Template(
+    layout=go.Layout(
+        colorway=BENE_COLORS_LIGHT, paper_bgcolor="#222", plot_bgcolor="#222"
+    )
+)
+pio.templates.default = "plotly_dark+bene"
+
+
+def set_transparency(hex_color: str, transparency: float) -> str:
+    """
+    Set the transparency of a hex color.
+
+    Parameters:
+    hex_color (str): The hex color code (e.g., "#47476b").
+    transparency (float): The transparency level (0.0 to 1.0).
+
+    Returns:
+    str: The RGBA color code.
+    """
+    if hex_color.startswith("#"):
+        hex_color = hex_color[1:]
+
+    # Convert hex to RGB
+    r = int(hex_color[0:2], 16)
+    g = int(hex_color[2:4], 16)
+    b = int(hex_color[4:6], 16)
+
+    # Return the RGBA color
+    return f"rgba({r}, {g}, {b}, {transparency})"
+
+def find_p_break(p_value: float, current_min_break:float, precision: int) -> float:
+    if (p_value < current_min_break) and (p_value > current_min_break/10):
+        return current_min_break, precision
+    else:
+        return find_p_break(p_value, current_min_break/10, precision+1)
+
+# Load dataset
+# Original from https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database (License: CC0: Public Domain)
+df = pd.read_csv("diabetes.csv")
+```
+
+Es befinden sich insgesamt 768 Einträge im Datensatz. Eine erste deskriptive Analyse ist in @tbl-describe dargestellt. Der Datensatz enthält die Variablen:
+
+- Body-Mass-Index (BMI, $\text{Gewicht in kg}/(\text{Größe in m})^2$)
+- Anzahl der Schwangerschaften
+- Alter
+- Glukosekonzentration im Plasma 2 Stunden nach einem oralen Glukosetoleranztest (mg/dl)
+- Blutdruck (mm Hg)
+- Hautdicke (Trizeps in mm)
+- Insulinkonzentration im Serum (mu U/ml)
+- Diabetes-Pedigree-Faktor (Funktion die das Diabetesrisiko aufgrund der Verwandtschaft bewertet)
+- Outcome (0 = kein Diabetes, 1 = Diabetes)
+
+```{python}
+#| label: tbl-describe
+#| tbl-cap: Deskriptive Statistik des Datensatzes
+
+df.describe().round(2)
+```
+
+In einigen Variablen befinden sich Nullwerte, die entsprechend der Ausschlusskriterien entfernt werden sollten, um eine korrekte Analyse durchzuführen.
+
+```{python}
+
+df_without_zero = df[
+    (df["Glucose"] != 0)
+    & (df["BloodPressure"] != 0)
+    & (df["SkinThickness"] != 0)
+    & (df["Insulin"] != 0)
+    & (df["BMI"] != 0)
+    & (df["Age"] != 0)
+]
+df_without_zero_count = df_without_zero.count()[0]
+```
+
+Würde man alle Patientinnen mit Nullwerten in einer der Variablen entfernen, hätte man dadurch nur noch `{python} int(df_without_zero_count)` Datensätze. Die primäre Forschungsfrage beschäftigt sich mit dem BMI. Teilnehmerinnen mit einem BMI von 0 wurden entfernt. Bei anderen Nullwerten wird der Median verwendet, um den Datensatz nicht übermäßig zu verkleinern.
+
+```{python}
+
+df = df[df["BMI"] != 0]
+df["Glucose"] = df["Glucose"].replace(0, df["Glucose"].median())
+df["BloodPressure"] = df["BloodPressure"].replace(0, df["BloodPressure"].median())
+df["SkinThickness"] = df["SkinThickness"].replace(0, df["SkinThickness"].median())
+df["Insulin"] = df["Insulin"].replace(0, df["Insulin"].median())
+df["Age"] = df["Age"].replace(0, df["Age"].median())
+```
+
+Nach der Bereinigung umfasst der Datensatz 757 Einträge, die für die Analyse verwendet werden können (vgl. @tbl-describe-cleaned).
+
+```{python}
+#| label: tbl-describe-cleaned
+#| tbl-cap: Deskriptive Statistik des Datensatzes nach Bereinigung
+
+df.describe()
+```
+
+#### Verteilung der Variablen
+
+@fig-distribution-outcome zeigt die Verteilung der kontinuierlichen Variablen nach Diabetes-Status.
+
+```{python}
+#| label: fig-distribution-outcome
+#| fig-cap: Verteilung der kontinuierlichen Variablen nach Diabetes-Status
+#| fig-subcap: 
+#|   - BMI
+#|   - Anzahl der Schwangerschaften
+#|   - Alter
+#|   - Glukose in mg/dl
+#|   - Blutdruck in mm Hg
+#|   - Hautdicke in mm
+#|   - Insulin in mu U/ml
+#|   - Diabetes-Pedigree-Faktor
+#| layout-ncol: 2
+
+def create_boxplot(data: pd.DataFrame, var_name: str) -> go.Figure:
+    fig = go.Figure()
+
+    for outcome in [0, 1]:
+        fig.add_trace(
+            go.Box(
+                y=data[data["Outcome"] == outcome][var_name],
+                name=f"{'Diabetes' if outcome == 1 else 'Kein Diabetes'}",
+                marker_color=BENE_COLORS_LIGHT[3 if outcome == 1 else 2],
+            )
+        )
+
+    fig.update_layout(
+        yaxis_title=var_name,
+        showlegend=False,
+    )
+    return fig
+
+for var in [
+    "BMI",
+    "Pregnancies",
+    "Age",
+    "Glucose",
+    "BloodPressure",
+    "SkinThickness",
+    "Insulin",
+    "DiabetesPedigreeFunction",
+]:
+    fig = create_boxplot(df, var)
+    fig.show()
+```
+
+Einige Daten wurden in Gruppen eingeteilt, um die Analyse zu optimieren. Die Gruppen umfassen BMI-Kategorien (@tbl-grouped-bmi), Anzahl der Schwangerschaften (@tbl-grouped-pregnancies) und Alter (@tbl-grouped-age).
+
+```{python}
+
+# Translate BMI to WHO categories
+def get_bmi_category(bmi):
+    if bmi < 18.5:
+        return "Underweight"
+    elif bmi < 25:
+        return "Normal"
+    elif bmi < 30:
+        return "Overweight"
+    else:
+        return "Obese"
+
+df["BMI_Category"] = df["BMI"].apply(get_bmi_category)
+df["BMI_Category"] = pd.Categorical(
+    df["BMI_Category"], categories=["Underweight", "Normal", "Overweight", "Obese"], ordered=True
+)
+
+# Add pregnancy groups
+def get_pregnancy_group(pregnancies):
+    if pregnancies == 0:
+        return "0"
+    elif pregnancies <= 3:
+        return "1-3"
+    elif pregnancies <= 6:
+        return "4-6"
+    else:
+        return ">6"
+
+
+df["Pregnancies_Group"] = df["Pregnancies"].apply(get_pregnancy_group)
+df["Pregnancies_Group"] = pd.Categorical(
+    df["Pregnancies_Group"], categories=["0", "1-3", "4-6", ">6"], ordered=True
+)
+
+# Add age groups
+def get_age_group(age: float) -> str:
+    if age < 30:
+        return "<30"
+    elif age <= 40:
+        return "30-40"
+    else:
+        return ">40"
+
+df["Age_Group"] = df["Age"].apply(get_age_group)
+df["Age_Group"] = pd.Categorical(
+    df["Age_Group"], categories=["<30", "30-40", ">40"], ordered=True
+)
+```
+
+```{python}
+#| label: tbl-grouped-bmi
+#| tbl-cap: Gruppierung der Datensätze nach BMI-Kategorien
+
+df.groupby("BMI_Category").agg(
+    {"BMI": "count", "Outcome": "mean"}
+).rename(columns={"BMI": "Anzahl", "Outcome": "Diabetes Rate"}).round(2).reset_index()
+```
+
+```{python}
+#| label: tbl-grouped-pregnancies
+#| tbl-cap: Gruppierung der Datensätze nach Anzahl der Schwangerschaften
+
+df.groupby("Pregnancies_Group").agg(
+    {"Pregnancies": "count", "Outcome": "mean"}
+).rename(columns={"Pregnancies": "Anzahl", "Outcome": "Diabetes Rate"}).round(2).reset_index()
+```
+
+```{python}
+#| label: tbl-grouped-age
+#| tbl-cap: Gruppierung der Datensätze nach Altersgruppen
+
+df.groupby("Age_Group").agg(
+    {"Age": "count", "Outcome": "mean"}
+).rename(columns={"Age": "Anzahl", "Outcome": "Diabetes Rate"}).round(2).reset_index()
+```
+
+### Statistische Analyse
+
+#### Chi-Quadrat-Tests
+
+Die Ergebnisse des Chi-Quadrat-Tests für die kategorialen Variablen BMI, Alter und Schwangerschaften sind in @tbl-chi-square-test dargestellt. Alle Werte sind statistisch signifikant ($p<0.05$), was auf eine Assoziation mit dem Diabetes-Status hinweist. Die primär zu untersuchende Variable, der BMI, zeigt dabei die stärkste Assoziation. Eine weitere Untersuchung der Residuen des Chi-Quadrat-Tests (vgl. @tbl-residues) für die einzelnen Gruppierungen in BMI, Alter und Anzahl an Schwangerschaften zeigt einige signifikante Unterschiede zwischen den Gruppen. Jedoch sind nur in den Gruppen *Untergewicht* der BMI-Kategorie (welche keinen Diabetes-Fall aufweist) und den Gruppen *0* und *4-6* der Anzahl an Schwangerschaften keine statistisch signifikanten Residuen ($<-2$ oder $>2$) zu erkennen.
+
+```{python}
+# | label: tbl-chi-square-test
+# | tbl-cap: Chi-Quadrat-Test p-Werte für kategoriale Variablen
+
+
+def perform_chi_square(data: pd.DataFrame, category: str) -> tuple:
+    contingency_table = pd.crosstab(data[category], data["Outcome"])
+    chi2, p_value, dof, expected_freq = chi2_contingency(contingency_table)
+    if p_value < 0.05:
+        p_break, precision = find_p_break(p_value, 0.05, 2)
+        p_value = f"< {p_break:.{precision}f}"
+    residuals = (contingency_table - expected_freq) / np.sqrt(expected_freq)
+    return p_value, residuals
+
+
+p_bmi, residuals_bmi = perform_chi_square(df, "BMI_Category")
+p_age, residuals_age = perform_chi_square(df, "Age_Group")
+p_preg, residuals_preg = perform_chi_square(df, "Pregnancies_Group")
+
+chi_square_results = pd.DataFrame(
+    {
+        "Category": ["BMI", "Age", "Pregnancies"],
+        "p-value": [p_bmi, p_age, p_preg],
+    }
+)
+
+with pd.option_context("display.float_format", "{.:2f}".format):
+    show(chi_square_results, escape=False)
+```
+
+```{python}
+# | label: tbl-residues
+# | tbl-cap: "Residuen des Chi-Quadrat-Tests"
+# | tbl-subcap:
+# |   - "BMI-Kategorien"
+# |   - "Altersgruppen"
+# |   - "Schwangerschaftsgruppen"
+
+show(
+    residuals_bmi.reset_index().style.background_gradient(
+        cmap="vanimo", vmin=-4, vmax=4, axis=None
+    )
+)
+show(residuals_age.style.background_gradient(cmap="vanimo", vmin=-4, vmax=4, axis=None))
+show(
+    residuals_preg.style.background_gradient(cmap="vanimo", vmin=-4, vmax=4, axis=None)
+)
+```
+
+#### T-Tests
+
+Für die kontinuierlichen Variablen wurden t-Tests durchgeführt, um Unterschiede zwischen Diabetikerinnen und Nicht-Diabetikerinnen zu untersuchen. Die Ergebnisse sind in @tbl-t-test dargestellt. Die Variablen Glukose, BMI, Alter und Diabetes-Pedigree-Faktor zeigen signifikante Unterschiede zwischen den Gruppen ($p<0.05$).
+
+```{python}
+# | label: tbl-t-test
+# | tbl-cap: P-Werte des t-Tests für kontinuierliche Variablen
+
+
+def perform_t_test(data: pd.DataFrame, variable: str) -> float:
+    diabetic = data[data["Outcome"] == 1][variable]
+    non_diabetic = data[data["Outcome"] == 0][variable]
+    t_stat, p_value = ttest_ind(diabetic, non_diabetic)
+    return p_value
+
+
+continuous_vars = [
+    "Glucose",
+    "BloodPressure",
+    "SkinThickness",
+    "Insulin",
+    "DiabetesPedigreeFunction",
+]
+p_values = []
+for var in continuous_vars:
+    p_value = perform_t_test(df, var)
+    if p_value < 0.05:
+        p_break, precision = find_p_break(p_value, 0.05, 2)
+        p_value = f"< {p_break:.{precision}f}"
+    p_values.append(p_value)
+
+df_t_test = pd.DataFrame(
+    {
+        "Variable": continuous_vars,
+        "p-value": p_values,
+    }
+)
+df_t_test
+```
+
+#### Logistische Regression und Odds Ratio für BMI
+
+```{python}
+#| label: lst-calculate-odds-ratio-bmi
+
+def calculate_odds_ratio(data: pd.DataFrame, var: str) -> tuple:
+    X = sm.add_constant(data[var])
+    model = sm.Logit(data["Outcome"], X).fit(disp=0)
+    odds_ratio = np.exp(model.params[var])
+    conf_int = np.exp(model.conf_int().iloc[1])
+    return odds_ratio, conf_int[0], conf_int[1], model
+
+odds_ratio_bmi, ci_lower_bmi, ci_upper_bmi, lr_result_bmi = calculate_odds_ratio(df, "BMI")
+
+fpr, tpr, _thresholds = roc_curve(
+    df["Outcome"], df["BMI"].apply(lambda x: lr_result_bmi.predict([1, x])[0])
+)
+auc_wert = float(auc(fpr, tpr))
+```
+
+Mittels logistischer Regression wurde der Zusammenhang zwischen BMI und Diabetes-Risiko untersucht (@fig-logistic-regression-results). Die berechnete Odds Ratio für den BMI beträgt ≈`{python} f"{odds_ratio_bmi:.2f}"`, was bedeutet, dass mit jedem Anstieg des BMI um einen Punkt das Diabetes-Risiko um 11% steigt. Das 95%-Konfidenzintervall für den Odds Ratio liegt zwischen ≈`{python} f"{ci_lower_bmi:.2f}"` und ≈`{python} f"{ci_upper_bmi:.2f}"`. Die ROC-Kurve (@fig-roc-auc-bmi) und der AUC-Wert von ≈`{python} f"{auc_wert:.2f}"` zeigen die moderate Diskriminierungsfähigkeit des BMI-basierten Modells.
+
+```{python}
+# | label: fig-logistic-regression-results
+# | fig-cap: Logistische Regressionskurve für BMI und Diabetes-Typ-2
+
+bmi_range = np.arange(df["BMI"].min(), df["BMI"].max(), 0.01)
+
+# Berechnung der Wahrscheinlichkeiten für den Bereich der BMI-Werte
+probabilities = 1 / (
+    1 + np.exp(-(lr_result_bmi.params["const"] + lr_result_bmi.params["BMI"] * bmi_range))
+)
+
+# Calculate predictions for bmi_range
+bmi_with_const = sm.add_constant(bmi_range)
+
+# Convert to numpy arrays for matrix operations
+bmi_with_const_np = np.asarray(bmi_with_const)
+cov_matrix_np = np.asarray(lr_result_bmi.cov_params())
+
+# Calculate variance of the predictions
+var_predictions = np.einsum('ij,jk,ik->i', bmi_with_const_np, cov_matrix_np, bmi_with_const_np)
+
+# Compute standard errors
+std_errors = np.sqrt(var_predictions)
+
+# Calculate predictions
+mean = lr_result_bmi.predict(bmi_with_const)
+
+# 95% Confidence Interval calculation
+z_value = 1.96  # for 95% confidence level
+ci_upper = mean + z_value * std_errors
+ci_lower = mean - z_value * std_errors
+
+fig = go.Figure()
+
+fig.add_trace(
+    go.Scatter(
+        x=bmi_range,
+        y=probabilities,
+        mode="lines",
+        name="Logistische Regression",
+        line=dict(color=BENE_COLORS_LIGHT[0]),
+    )
+)
+
+fig.add_trace(
+    go.Scatter(
+        x=np.concatenate([bmi_range, bmi_range[::-1]]),
+        y=np.concatenate([ci_upper, ci_lower[::-1]]),
+        fill='toself',
+        hoverinfo="skip",
+        name='95% CI',
+        mode='none',
+        fillcolor=set_transparency(BENE_COLORS_LIGHT[0], 0.25),
+    )
+)
+
+fig.add_trace(
+    go.Scatter(
+        x=df["BMI"][df["Outcome"] == 1],
+        y=df["Outcome"][df["Outcome"] == 1],
+        mode="markers",
+        name="Diabetes-Typ-2",
+        marker_symbol="diamond",
+        marker_size=5,
+        line_color=set_transparency(BENE_COLORS_LIGHT[3], 0.5),
+    )
+)
+
+fig.add_trace(
+    go.Scatter(
+        x=df["BMI"][df["Outcome"] == 0],
+        y=df["Outcome"][df["Outcome"] == 0],
+        mode="markers",
+        name="kein Diabetes-Typ-2",
+        marker_symbol="diamond",
+        marker_size=5,
+        line_color=set_transparency(BENE_COLORS_LIGHT[2], 0.5),
+    )
+)
+fig.update_layout(
+    xaxis_title="BMI",
+    yaxis_title="Outcome",
+    xaxis=dict(range=[df["BMI"].min(), df["BMI"].max()], constrain="domain", fixedrange=True),
+)
+
+fig.show()
+```
+
+```{python}
+# | label: fig-roc-auc-bmi
+# | fig-cap: ROC-Kurve für das BMI-basierte Modell
+
+fig = go.Figure()
+
+fig.add_shape(
+    type="line", line_dash="dash", fillcolor="grey", x0=0, x1=1, y0=0, y1=1
+)
+fig.add_trace(
+    go.Scatter(
+        x=fpr,
+        y=tpr,
+        mode="lines",
+        name=f"ROC Kurve (AUC = {auc_wert:.2f})",
+        line_color=BENE_COLORS_LIGHT[0],
+        fill="tozeroy",
+        fillcolor=set_transparency(BENE_COLORS_LIGHT[0], 0.25),
+    )
+)
+fig.update_layout(
+    xaxis_title="1 - Spezifität",
+    yaxis_title="Sensitivität",
+    xaxis=dict(range=[0, 1], constrain="domain", fixedrange=True),
+    yaxis=dict(
+        range=[0, 1], scaleanchor="x", scaleratio=1, constrain="domain", fixedrange=True
+    ),
+    showlegend=False,
+)
+fig.show()
+```
+
+#### Odds Ratios für weitere kontinuierliche Variablen
+
+Um die Odds Ratios für die weiteren kontinuierlichen Variablen zu berechnen und vergleichbar zu machen, wurden die Variablen standardisiert und die logistische Regression durchgeführt. Die Ergebnisse sind in @fig-forest-plot dargestellt. Glukose zeigt den stärksten Zusammenhang mit Diabetes, gefolgt von BMI. Alle Variablen haben signifikante Odds-Ratios und Konfidenzintervalle ($>1$), die auf eine positive Korrelation zu Diabetes-Typ-2 hinweisen.
+
+```{python}
+#| label: fig-forest-plot
+#| fig-cap: Forest Plot der normalisierten Odds Ratios für kontinuierliche Variablen
+
+# Berechnung der Odds Ratios auf standardisierten Variablen
+def calculate_odds_ratio_std(data: pd.DataFrame, var: str) -> tuple:
+    data_std = data.copy()
+    data_std[var] = (data_std[var] - data_std[var].mean()) / data_std[var].std()
+    X = sm.add_constant(data_std[var])
+    model = sm.Logit(data_std["Outcome"], X).fit(disp=0)
+    odds_ratio = np.exp(model.params[var])
+    conf_int = np.exp(model.conf_int().loc[var])
+    return odds_ratio, conf_int[0], conf_int[1], model
+
+# Liste der Variablen
+variables = [
+    "BMI",
+    "Glucose",
+    "BloodPressure",
+    "SkinThickness",
+    "Insulin",
+    "DiabetesPedigreeFunction",
+    "Age",
+]
+
+# Berechnung der Odds Ratios mittels der Standardisierung
+odds_ratios = []
+lower_cis = []
+upper_cis = []
+for var in variables:
+    or_value, ci_lower, ci_upper, _ = calculate_odds_ratio_std(df, var)
+    odds_ratios.append(or_value)
+    lower_cis.append(ci_lower)
+    upper_cis.append(ci_upper)
+
+# Erstellung des Forest Plots
+fig = go.Figure()
+
+# Vertikale Linie bei OR = 1
+fig.add_shape(
+    type="line",
+    x0=1,
+    x1=1,
+    y0=-1,
+    y1=len(variables),
+    line=dict(color="grey", dash="dash"),
+)
+
+# Odds Ratios und Konfidenzintervalle plotten
+fig.add_trace(
+    go.Scatter(
+        x=odds_ratios,
+        y=variables,
+        mode="markers",
+        error_x=dict(
+            type="data",
+            symmetric=False,
+            array=[up - or_val for up, or_val in zip(upper_cis, odds_ratios)],
+            arrayminus=[or_val - low for low, or_val in zip(lower_cis, odds_ratios)],
+        ),
+        marker=dict(color=BENE_COLORS_LIGHT[0], size=8, symbol="diamond"),
+        name="Odds Ratio (standardisiert)",
+    )
+)
+
+fig.update_layout(
+    xaxis_title="Odds Ratio (log scale)",
+    yaxis_title="Variable",
+    xaxis_type="log",
+    showlegend=False,
+)
+
+fig.show()
+```
+
+## Diskussion
+
+### Limitationen
+
+Die vorliegende Analyse weist mehrere Limitationen auf, die bei der Interpretation der Ergebnisse berücksichtigt werden müssen. Zum einen verhindert das Querschnittsdesign jegliche kausale Schlussfolgerung. Da die Erhebung der Daten zu einem einzigen Zeitpunkt erfolgte, können Zusammenhänge zwischen Variablen nur als assoziativ betrachtet werden. 
+
+Ein weiterer wesentlicher Punkt ist der Selektionsbias. Die Ergebnisse basieren ausschließlich auf einer spezifischen Population von Pima-Indianerinnen, weshalb die Übertragbarkeit der Resultate auf andere Bevölkerungsgruppen oder geografische Regionen eingeschränkt sein könnte. Darüber hinaus könnte die Auswahl der Patientinnen selbst durch unterschiedliche Einschlusskriterien weiter verzerrt sein.
+
+Die Datenqualität stellt ein zusätzliches Problem dar, da fehlende Werte mit dem Median imputiert wurden. Diese Methode verringert zwar die Anzahl fehlender Daten, könnte jedoch zu einer Unterschätzung oder Überschätzung der wahren Varianz der Messwerte führen. Hier wäre eine detailliertere Analyse der fehlenden Werte oder eine andere Imputationsmethode, wie z.B. _Nearest Neighbors Imputation_ [@Scikit-learnDevelopers2025ImputationMissingValues] sinnvoll.
+
+Nicht zuletzt sind potenzielle Confounding-Faktoren, wie Ernährungsgewohnheiten und körperliche Aktivität, in der Analyse nicht berücksichtigt worden. Diese nicht erfassten Variablen könnten die beobachteten Zusammenhänge zwischen BMI, anderen Risikofaktoren und dem Diabetes-Risiko beeinflussen und sollten in zukünftigen Untersuchungen genauer untersucht werden.
+
+### Interpretation der Ergebnisse
+
+Die Analyse bestätigt einen signifikanten Zusammenhang zwischen BMI und Diabetes-Typ-2 bei Pima-Indianerinnen, weshalb die Nullhypothese verworfen werden kann. Neben dem BMI zeigen die deskriptiven Statistiken, Chi‑Quadrat-Tests und t‑Tests, dass auch andere Variablen wie Glukose, Alter, Blutdruck und der Diabetes-Pedigree-Faktor wichtige Prädiktoren für das Diabetes-Risiko darstellen könnten. Insbesondere der Glukose-Wert ist aber wahrschinlich eine Folge des Diabetes und nicht ein Prädiktor.
+
+Insbesondere weisen die Chi‑Quadrat-Tests darauf hin, dass die Kategorisierung von BMI, Altersgruppen und Schwangerschaftszahlen statistisch signifikante Unterschiede zwischen Diabetikerinnen und Nicht-Diabetikerinnen offenbart. Die t‑Tests bestätigen signifikante Differenzen in den Mittelwerten kontinuierlicher Variablen zwischen den Variablen.
+
+Die logistische Regression liefert einen quantitativen Zusammenhang: Mit jedem Punktanstieg des BMI steigt das Risiko für Diabetes signifikant an, was durch den berechneten Odds Ratio untermauert wird. Zudem zeigt die ROC-Analyse des BMI-basierten Modells eine moderate Diskriminierungsfähigkeit, und der Forest Plot der standardisierten Odds Ratios verdeutlicht, dass insbesondere hohe Glukosewerte den stärksten Zusammenhang zu Diabetes-Typ-2 haben, während auch andere Variablen ihre Relevanz besitzen.
+
+Eine weiterführende multivariate Analyse könnte zudem die komplexen Interaktionen zwischen den einzelnen Risikofaktoren detaillierter beleuchten.

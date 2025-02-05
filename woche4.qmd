@@ -3,6 +3,7 @@ title: "Woche 4"
 subtitle: "Statistischer Analyse Plan (SAP)"
 number-sections: true
 toc: false
+
 ---
 
 ## Einleitung
@@ -26,7 +27,7 @@ Es wird der *Pima Indians Diabetes Database*-Datensatz [@UCIMachineLearning2016P
 
 ### Konkrete Forschungsfragen oder Hypothesen.
 
-**$H_0$**: Es besteht eine Assoziation zwischen dem Body-Mass-Index (BMI) und dem Auftreten von Typ-2-Diabetes bei Pima-Indianerinnen.
+**$H_0$**: Es besteht keine Assoziation zwischen dem Body-Mass-Index (BMI) und dem Auftreten von Typ-2-Diabetes bei Pima-Indianerinnen.
 
 ### Primäres Ziel der Studie und eventuelle sekundäre Ziele.
 
@@ -38,7 +39,7 @@ Es wird der *Pima Indians Diabetes Database*-Datensatz [@UCIMachineLearning2016P
 
 ### Primärer Endpunkt (Zielvariable): Definition
 
-- **Diabetesstatus**: Dichotome Variable (0 = kein Diabetes, 1 = Diabetes)
+- Odds-Ratio für das Auftreten von Diabetes-Typ-2 in Bezug auf den Body-Mass-Index (BMI).
 
 ### Sekundäre Endpunkte: Definition
 
