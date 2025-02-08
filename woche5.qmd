@@ -400,7 +400,6 @@ df_t_test
 #### Logistische Regression und Odds Ratio für BMI
 
 ```{python}
-#| label: lst-calculate-odds-ratio-bmi
 
 def calculate_odds_ratio(data: pd.DataFrame, var: str) -> tuple:
     X = sm.add_constant(data[var])
