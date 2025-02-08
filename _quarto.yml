@@ -39,6 +39,11 @@ format:
     code-fold: show
     warning: false
     message: NA
+    include-after-body:
+      text: |
+        <script>
+        document.documentElement.classList.add('dark');
+        </script>
 
 image: "preview.png"
 open-graph: true
